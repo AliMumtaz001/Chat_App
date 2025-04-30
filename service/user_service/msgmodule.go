@@ -1,4 +1,4 @@
-package userservice
+package userserviceimpl
 
 type UserService interface {
 	// SaveResults(c *gin.Context, req *models.Result) *models.Result

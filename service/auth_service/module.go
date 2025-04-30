@@ -1,4 +1,4 @@
-package authservice
+package authserviceimpl
 
 import (
 	"github.com/AliMumtaz001/Go_Chat_App/models"
@@ -6,8 +6,9 @@ import (
 )
 
 type AuthService interface {
-	Login(c *gin.Context, login *models.UserLogin) (*models.TokenPair, error)
-	SignUp(c *gin.Context, req *models.User) *models.User
-	RefreshAccessToken(c *gin.Context) (string, error)
-	SearchUser(c *gin.Context, query string) (bool, error)
+	Loginservice(c *gin.Context, login *models.UserLogin) (*models.TokenPair, error)
+	SignUpservice(c *gin.Context, req *models.User) *models.User
+	RefreshAccessTokenservice(c *gin.Context) (string, error)
+	SearchUserservice(c *gin.Context, query string) (bool, error)
+	SendMessageservice(c *gin.Context, message models.Message) error
 }

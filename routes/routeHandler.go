@@ -1,8 +1,9 @@
 package routes
 
 func (r *Router) defineRoutes() {
-	r.Engine.POST("/signup", r.SignUp)
-	r.Engine.POST("/login", r.Login)
-	r.Engine.GET("/refresh", r.RefreshKey)
-	r.Engine.GET("/search-user", r.SearchUserHandler)
+	r.Engine.POST("/signup", r.SignUpreq)
+	r.Engine.POST("/login", r.Loginreq)
+	r.Engine.GET("/refresh", r.RefreshKeyreq)
+	r.Engine.GET("/search-user", r.SearchUserreq)
+	r.Engine.GET("/message", r.SendMessagereq)
 }

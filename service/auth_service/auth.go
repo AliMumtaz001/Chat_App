@@ -15,9 +15,9 @@ import (
 var refreshSecretKey = []byte("my_refresh_secret_key")
 var secretKey = []byte("secret-key")
 
-func (u *AuthServiceImpl) SignUp(c *gin.Context, req *models.User) *models.User {
+func (u *AuthServiceImpl) SignUpservice(c *gin.Context, req *models.User) *models.User {
 
-	createdUser := u.userAuth.SignUp(c, req)
+	createdUser := u.userAuth.SignUpdb(c, req)
 
 	if createdUser == nil {
 		fmt.Println("signup error")
@@ -34,9 +34,9 @@ func (u *AuthServiceImpl) SignUp(c *gin.Context, req *models.User) *models.User 
 	return &response
 }
 
-func (u *AuthServiceImpl) Login(c *gin.Context, req *models.UserLogin) (*models.TokenPair, error) {
+func (u *AuthServiceImpl) Loginservice(c *gin.Context, req *models.UserLogin) (*models.TokenPair, error) {
 
-	user, err := u.userAuth.FindUserByEmail(req.Email)
+	user, err := u.userAuth.FindUserByEmaildb(req.Email)
 	if err != nil {
 		return nil, errors.New("User not found")
 	}
@@ -67,7 +67,7 @@ func (u *AuthServiceImpl) Login(c *gin.Context, req *models.UserLogin) (*models.
 	return &response, nil
 }
 
-func (a *AuthServiceImpl) RefreshAccessToken(c *gin.Context) (string, error) {
+func (a *AuthServiceImpl) RefreshAccessTokenservice(c *gin.Context) (string, error) {
 	refreshTokenString := c.GetHeader("Authorization")
 	refreshTokenString = strings.TrimPrefix(refreshTokenString, "Bearer ")
 
@@ -108,17 +108,26 @@ func (a *AuthServiceImpl) RefreshAccessToken(c *gin.Context) (string, error) {
 	return newAccessTokenString, nil
 }
 
-func (s *AuthServiceImpl) SearchUser(ctx *gin.Context, query string) (bool, error) {
+func (s *AuthServiceImpl) SearchUserservice(ctx *gin.Context, query string) (bool, error) {
 	// Basic validation
 	if query == "" {
 		return false, errors.New("query cannot be empty")
 	}
 
 	// Call the repository to check if the user exists
-	exists, err := s.userAuth.SearchUser(ctx, query)
+	exists, err := s.userAuth.SearchUserdb(ctx, query)
 	if err != nil {
 		return false, fmt.Errorf("failed to search user: %w", err)
 	}
 
 	return exists, nil
+}
+
+func (s *AuthServiceImpl) SendMessageservice(c *gin.Context, message models.Message) error {
+	err := s.userAuth.SendMessagedb(c, message)
+	if err != nil {
+		return fmt.Errorf("failed to send message: %w", err)
+	}
+
+	return nil
 }

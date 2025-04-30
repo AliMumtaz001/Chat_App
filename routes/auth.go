@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (r *Router) Login(c *gin.Context) {
+func (r *Router) Loginreq(c *gin.Context) {
 	var req models.UserLoginReq
 	var login models.UserLogin
 
@@ -22,7 +22,7 @@ func (r *Router) Login(c *gin.Context) {
 		Password: req.Password,
 	}
 
-	tokenPair, err := r.AuthService.Login(c, &login)
+	tokenPair, err := r.AuthService.Loginservice(c, &login)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -30,7 +30,7 @@ func (r *Router) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, tokenPair)
 }
-func (r *Router) SignUp(c *gin.Context) {
+func (r *Router) SignUpreq(c *gin.Context) {
 	var req *models.User
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
@@ -42,7 +42,7 @@ func (r *Router) SignUp(c *gin.Context) {
 		Email:    req.Email,
 		Password: req.Password,
 	}
-	response := r.AuthService.SignUp(c, &signup)
+	response := r.AuthService.SignUpservice(c, &signup)
 	if response == nil {
 		return
 	}
@@ -50,8 +50,8 @@ func (r *Router) SignUp(c *gin.Context) {
 
 }
 
-func (r *Router) RefreshKey(c *gin.Context) {
-	newToken, err := r.AuthService.RefreshAccessToken(c)
+func (r *Router) RefreshKeyreq(c *gin.Context) {
+	newToken, err := r.AuthService.RefreshAccessTokenservice(c)
 	if err != nil {
 		c.JSON(401, gin.H{"error": err.Error()})
 		return
@@ -62,7 +62,7 @@ func (r *Router) RefreshKey(c *gin.Context) {
 	})
 }
 
-func (r *Router) SearchUserHandler(c *gin.Context) {
+func (r *Router) SearchUserreq(c *gin.Context) {
 	// Get query parameter (e.g., email or username)
 	query := c.Query("q")
 	if query == "" {
@@ -70,17 +70,33 @@ func (r *Router) SearchUserHandler(c *gin.Context) {
 		return
 	}
 
-	// Call the auth service to search for the user
-	exists, err := r.AuthService.SearchUser(c, query)
+	exists, err := r.AuthService.SearchUserservice(c, query)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search user"})
 		return
 	}
 
-	// Return response
 	if exists {
 		c.JSON(http.StatusOK, gin.H{"message": "User exists"})
 	} else {
 		c.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
 	}
+}
+
+func (r *Router) SendMessagereq(c *gin.Context) {
+	// Get the message from the request body
+	var message models.Message
+	if err := c.ShouldBindJSON(&message); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	// Call the auth service to send the message
+	err := r.AuthService.SendMessageservice(c, message)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send message"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
 }
