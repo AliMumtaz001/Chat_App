@@ -1,13 +1,11 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/AliMumtaz001/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
 )
-
 
 func (r *Router) Login(c *gin.Context) {
 	var req models.UserLoginReq
@@ -64,17 +62,25 @@ func (r *Router) RefreshKey(c *gin.Context) {
 	})
 }
 
-func (r *Router) SearchUsers(c *gin.Context) ([]models.User, error) {
-	query := c.Query("query")
+func (r *Router) SearchUserHandler(c *gin.Context) {
+	// Get query parameter (e.g., email or username)
+	query := c.Query("q")
 	if query == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing search query"})
-		return nil, nil
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter 'q' is required"})
+		return
 	}
 
-	response, err := r.UserService.SearchUsers(c, query)
-	if err == nil {
-		fmt.Println("error: user not found", err)
+	// Call the auth service to search for the user
+	exists, err := r.AuthService.SearchUser(c, query)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search user"})
+		return
 	}
 
-	return response, nil
+	// Return response
+	if exists {
+		c.JSON(http.StatusOK, gin.H{"message": "User exists"})
+	} else {
+		c.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
+	}
 }

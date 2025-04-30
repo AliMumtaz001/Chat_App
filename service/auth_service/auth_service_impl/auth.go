@@ -107,3 +107,18 @@ func (a *AuthServiceImpl) RefreshAccessToken(c *gin.Context) (string, error) {
 
 	return newAccessTokenString, nil
 }
+
+func (s *AuthServiceImpl) SearchUser(ctx *gin.Context, query string) (bool, error) {
+	// Basic validation
+	if query == "" {
+		return false, errors.New("query cannot be empty")
+	}
+
+	// Call the repository to check if the user exists
+	exists, err := s.userAuth.SearchUser(ctx, query)
+	if err != nil {
+		return false, fmt.Errorf("failed to search user: %w", err)
+	}
+
+	return exists, nil
+}

@@ -11,10 +11,9 @@ import (
 )
 
 type Storage interface {
-	// SaveResult(*models.Result) (*models.Result, error)
 	FindUserByEmail(email string) (*models.UserLogin, error)
 	SignUp(c *gin.Context, req *models.User) *models.User
-	// FetchResultsByUserID(userID string, limit int, offset int) ([]models.Result, error)
+	SearchUser(ctx *gin.Context, query string) (bool, error)
 }
 
 type StorageImpl struct {
@@ -118,37 +117,6 @@ func (u *StorageImpl) SignUp(c *gin.Context, req *models.User) *models.User {
 	return req
 }
 
-func (u *StorageImpl) FetchResultsByUserID(userID string, limit int, offset int) ([]models.Result, error) {
-	rows, err := u.db.Query(`SELECT user_id, words, digits, special_char, lines, spaces, sentences, punctuation, consonants, vowels 
-	                         FROM results WHERE user_id = $1 ORDER BY user_id LIMIT $2 OFFSET $3`, userID, limit, offset)
-	if err != nil {
-		return nil, fmt.Errorf("query failed: %w", err)
-	}
-	defer rows.Close()
-
-	var results []models.Result
-	for rows.Next() {
-		var result models.Result
-		err := rows.Scan(
-			&result.Id,
-			&result.Words,
-			&result.Digits,
-			&result.SpecialChar,
-			&result.Lines,
-			&result.Spaces,
-			&result.Sentences,
-			&result.Punctuation,
-			&result.Consonants,
-			&result.Vowels,
-		)
-		if err != nil {
-			return nil, fmt.Errorf("row scan error: %w", err)
-		}
-		results = append(results, result)
-	}
-
-	return results, nil
-}
 
 // UserService represents a service with a database connection
 type UserService struct {
@@ -156,3 +124,12 @@ type UserService struct {
 }
 
 
+func (r *StorageImpl) SearchUser(c *gin.Context, query string) (bool, error) {
+		var exists bool
+		querySQL := `SELECT EXISTS (SELECT 1 FROM employeedata WHERE username = $1)`
+		err := r.db.QueryRowContext(c, querySQL, query).Scan(&exists)
+		if err != nil {
+			return false, fmt.Errorf("failed to query user: %w", err)
+		}
+		return exists, nil
+	}
