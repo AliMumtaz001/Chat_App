@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"strconv"
 	"time"
 
 	"github.com/AliMumtaz001/Go_Chat_App/models"
@@ -93,15 +94,17 @@ func (r *StorageImpl) SearchUserdb(c *gin.Context, query string) (bool, error) {
 	return exists, nil
 }
 
-func (r *StorageImpl) SendMessagedb(c *gin.Context, msg models.Message) error {
+func (r *StorageImpl) SendMessagedb(c *gin.Context, sID string, msg models.Message) error {
+	senID, err := strconv.ParseInt(sID, 10, 64)
+
 	message := models.Message{
-		ChatID :   msg.ChatID,
-		SenderID:   msg.SenderID,
+		ChatID:     msg.ChatID,
+		SenderID:   senID,
 		ReceiverID: msg.ReceiverID,
 		Content:    msg.Content,
 		Timestamp:  time.Now(),
 	}
 	collection := r.mongoClient.Database("chatdb").Collection("sendmsg")
-	_, err := collection.InsertOne(context.TODO(), message)
+	_, err = collection.InsertOne(context.TODO(), message)
 	return err
 }

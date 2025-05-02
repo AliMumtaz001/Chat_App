@@ -8,7 +8,7 @@ import (
 	"github.com/AliMumtaz001/Go_Chat_App/database"
 	"github.com/AliMumtaz001/Go_Chat_App/database/mongodb"
 	"github.com/AliMumtaz001/Go_Chat_App/database/postgresdb"
-	"github.com/AliMumtaz001/Go_Chat_App/routes"
+	routes "github.com/AliMumtaz001/Go_Chat_App/router"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )

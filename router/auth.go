@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/AliMumtaz001/Go_Chat_App/models"
@@ -86,17 +87,20 @@ func (r *Router) SearchUserreq(c *gin.Context) {
 func (r *Router) SendMessagereq(c *gin.Context) {
 	// Get the message from the request body
 	var message models.Message
+
+	userID := c.MustGet("userID").(string)
+	fmt.Printf("Id here", userID)
 	if err := c.ShouldBindJSON(&message); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
-	// Call the auth service to send the message
-	err := r.AuthService.SendMessageservice(c, message)
+	// Call the service layer to send the message
+	err := r.AuthService.SendMessageservice(c, userID, message)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send message"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully", "id": userID})
 }

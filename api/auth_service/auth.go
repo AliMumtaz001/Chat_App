@@ -123,11 +123,10 @@ func (s *AuthServiceImpl) SearchUserservice(ctx *gin.Context, query string) (boo
 	return exists, nil
 }
 
-func (s *AuthServiceImpl) SendMessageservice(c *gin.Context, message models.Message) error {
-	err := s.userAuth.SendMessagedb(c, message)
+func (s *AuthServiceImpl)SendMessageservice(c *gin.Context, sID string, message models.Message) error{
+	err := s.userAuth.SendMessagedb(c,sID, message)
 	if err != nil {
 		return fmt.Errorf("failed to send message: %w", err)
 	}
-
 	return nil
 }

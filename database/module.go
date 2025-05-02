@@ -9,5 +9,5 @@ type Storage interface {
 	FindUserByEmaildb(email string) (*models.UserLogin, error)
 	SignUpdb(c *gin.Context, req *models.User) *models.User
 	SearchUserdb(ctx *gin.Context, query string) (bool, error)
-	SendMessagedb(c *gin.Context, msg models.Message) error
+	SendMessagedb(c *gin.Context,sID string, msg models.Message) error
 }
