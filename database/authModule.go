@@ -95,6 +95,7 @@ func (r *StorageImpl) SearchUserdb(c *gin.Context, query string) (bool, error) {
 
 func (r *StorageImpl) SendMessagedb(c *gin.Context, msg models.Message) error {
 	message := models.Message{
+		ChatID :   msg.ChatID,
 		SenderID:   msg.SenderID,
 		ReceiverID: msg.ReceiverID,
 		Content:    msg.Content,
