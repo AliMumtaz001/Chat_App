@@ -30,68 +30,62 @@ func CreateToken(email string, id int) (string, error) {
 	return tokenString, nil
 }
 
-func VerifyToken(tokenString string) (*jwt.Token, error) {
-	var c *gin.Context
+
+func VerifyToken(tokenString string, c *gin.Context) (*jwt.Token, error) {
+	// Parse the token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
 	})
 
-	if err != nil {
+	if err != nil || !token.Valid {
 		return nil, err
 	}
 
-	if !token.Valid {
-		return nil, fmt.Errorf("invalid token")
-	}
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, fmt.Errorf("invalid token claims")
-	}
-	userID := fmt.Sprintf("%v", claims["userID"])
-	c.Set("userID", userID)
-
-	c.Next()
 
 	return token, nil
 }
 
-func Middleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
 
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Extract the token from the Authorization header
 		authHeader := c.GetHeader("Authorization")
+		// tokenString = strings.TrimPrefix(tokenString, "Bearer")
+
 		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header missing"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
 			c.Abort()
 			return
 		}
 		splitToken := strings.Split(authHeader, " ")
+
 		if len(splitToken) != 2 || splitToken[0] != "Bearer" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Authorization header format"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
 			c.Abort()
 			return
 		}
 		tokenString := splitToken[1]
 
-		token, err := VerifyToken(tokenString)
+		// Verify the token
+		token, err := VerifyToken(tokenString, c)
 		if err != nil {
-			c.JSON(401, gin.H{"error": "Invalid token"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			c.Abort()
 			return
 		}
+		// Extract claims
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok || !token.Valid {
-			c.JSON(401, gin.H{"error": "Invalid token claims"})
-			c.Abort()
+			fmt.Println("Invalid token claims 87")
+			c.BindJSON(http.StatusBadRequest)
 			return
 		}
-		userID, ok := claims["user_id"].(string)
-		if !ok {
-			c.JSON(401, gin.H{"error": "Invalid user ID in token"})
-			c.Abort()
-			return
-		}
-
+		userID := fmt.Sprintf("%v", claims["user_id"])
+		fmt.Println("User ID from token:", userID)
 		c.Set("userID", userID)
+
 		c.Next()
 	}
 }
+
+

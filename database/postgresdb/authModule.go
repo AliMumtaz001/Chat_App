@@ -1,28 +1,22 @@
-package database
+package postgresdb
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"net/http"
 	"regexp"
-	"strconv"
-	"time"
 
 	"github.com/AliMumtaz001/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type StorageImpl struct {
-	db          *sql.DB
-	mongoClient *mongo.Client
+	db *sql.DB
 }
 
-func NewStorage(db *sql.DB, input *mongo.Client) Storage {
+func NewStorage(db *sql.DB) Storage {
 	return &StorageImpl{
-		db:          db,
-		mongoClient: input,
+		db: db,
 	}
 }
 
@@ -92,19 +86,4 @@ func (r *StorageImpl) SearchUserdb(c *gin.Context, query string) (bool, error) {
 		return false, fmt.Errorf("failed to query user: %w", err)
 	}
 	return exists, nil
-}
-
-func (r *StorageImpl) SendMessagedb(c *gin.Context, sID string, msg models.Message) error {
-	senID, err := strconv.ParseInt(sID, 10, 64)
-
-	message := models.Message{
-		ChatID:     msg.ChatID,
-		SenderID:   senID,
-		ReceiverID: msg.ReceiverID,
-		Content:    msg.Content,
-		Timestamp:  time.Now(),
-	}
-	collection := r.mongoClient.Database("chatdb").Collection("sendmsg")
-	_, err = collection.InsertOne(context.TODO(), message)
-	return err
 }

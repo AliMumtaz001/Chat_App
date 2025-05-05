@@ -1,11 +1,11 @@
 package authserviceimpl
 
 import (
-	"github.com/AliMumtaz001/Go_Chat_App/database"
+	"github.com/AliMumtaz001/Go_Chat_App/database/postgresdb"
 )
 
 type AuthServiceImpl struct {
-	userAuth database.Storage
+	userAuth postgresdb.Storage
 }
 
 func NewAuthService(input NewAuthServiceImpl) AuthService {
@@ -15,5 +15,7 @@ func NewAuthService(input NewAuthServiceImpl) AuthService {
 }
 
 type NewAuthServiceImpl struct {
-	UserAuth database.Storage
+	UserAuth postgresdb.Storage
 }
+
+var _ AuthService = &AuthServiceImpl{}

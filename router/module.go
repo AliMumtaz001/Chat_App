@@ -22,4 +22,3 @@ func NewRouter(authService authservice.AuthService, userService userservice.User
 	router.defineRoutes()
 	return router
 }
-

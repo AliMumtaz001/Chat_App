@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func DbConnection() (*sql.DB, error) {
+func PostgresConn() (*sql.DB, error) {
 
 	host := os.Getenv("DB_HOST")
 	portStr := os.Getenv("DB_PORT")

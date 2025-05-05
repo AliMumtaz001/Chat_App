@@ -1,4 +1,4 @@
-package database
+package postgresdb
 
 import (
 	"github.com/AliMumtaz001/Go_Chat_App/models"
@@ -8,6 +8,5 @@ import (
 type Storage interface {
 	FindUserByEmaildb(email string) (*models.UserLogin, error)
 	SignUpdb(c *gin.Context, req *models.User) *models.User
-	SearchUserdb(ctx *gin.Context, query string) (bool, error)
-	SendMessagedb(c *gin.Context,sID string, msg models.Message) error
+	SearchUserdb(ctx *gin.Context, username string) (bool, error)
 }

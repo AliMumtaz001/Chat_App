@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/AliMumtaz001/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
@@ -65,13 +66,13 @@ func (r *Router) RefreshKeyreq(c *gin.Context) {
 
 func (r *Router) SearchUserreq(c *gin.Context) {
 	// Get query parameter (e.g., email or username)
-	query := c.Query("q")
-	if query == "" {
+	username := c.Query("q")
+	if username == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter 'q' is required"})
 		return
 	}
 
-	exists, err := r.AuthService.SearchUserservice(c, query)
+	exists, err := r.AuthService.SearchUserservice(c, username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search user"})
 		return
@@ -89,14 +90,15 @@ func (r *Router) SendMessagereq(c *gin.Context) {
 	var message models.Message
 
 	userID := c.MustGet("userID").(string)
-	fmt.Printf("Id here", userID)
 	if err := c.ShouldBindJSON(&message); err != nil {
+		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
+	receiverID := strconv.FormatInt(message.ReceiverID, 10)
 
 	// Call the service layer to send the message
-	err := r.AuthService.SendMessageservice(c, userID, message)
+	err := r.UserService.SendMessageservice(c, userID, receiverID, message)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
@@ -104,3 +106,33 @@ func (r *Router) SendMessagereq(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully", "id": userID})
 }
+
+func (r *Router) GetMessagereq(c *gin.Context) {
+	// var msg models.Message
+	// Get query parameters
+	senderID := c.Query("sender_id")
+	receiverID := c.Query("reciever_id")
+
+	if senderID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing sender_id "})
+		return
+	}
+	if receiverID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing reciever_id"})
+		return
+	}
+
+	// Debug log
+	fmt.Printf("Sender ID: %s, Receiver ID: %s\n", senderID, receiverID)
+
+	// Call the service layer to get messages
+	messages, err := r.UserService.GetMessageservice(c, senderID, receiverID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, messages)
+}
+
+// }

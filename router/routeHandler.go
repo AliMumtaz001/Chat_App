@@ -9,5 +9,6 @@ func (r *Router) defineRoutes() {
 	r.Engine.POST("/login", r.Loginreq)
 	r.Engine.GET("/refresh", r.RefreshKeyreq)
 	r.Engine.GET("/search-user", r.SearchUserreq)
-	r.Engine.POST("/message", auth.Middleware(), r.SendMessagereq)
+	r.Engine.POST("/sendmessage", auth.AuthMiddleware(), r.SendMessagereq)
+	r.Engine.GET("/getmessage", auth.AuthMiddleware(), r.GetMessagereq)
 }

@@ -1,0 +1,11 @@
+package userserviceimpl
+
+import (
+	"github.com/AliMumtaz001/Go_Chat_App/models"
+	"github.com/gin-gonic/gin"
+)
+
+type UserService interface {
+	SendMessageservice(c *gin.Context, senderID, receiverID string, message models.Message) error
+	GetMessageservice(c *gin.Context, senderID string, receiverID string) ([]models.Message, error)
+}

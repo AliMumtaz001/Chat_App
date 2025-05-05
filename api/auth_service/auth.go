@@ -3,6 +3,7 @@ package authserviceimpl
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -16,6 +17,14 @@ var refreshSecretKey = []byte("my_refresh_secret_key")
 var secretKey = []byte("secret-key")
 
 func (u *AuthServiceImpl) SignUpservice(c *gin.Context, req *models.User) *models.User {
+	// Validate email format using regex
+
+	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	matched := regexp.MustCompile(emailRegex).MatchString(req.Email)
+	if !matched {
+		fmt.Println("Invalid email format")
+		return nil
+	}
 
 	createdUser := u.userAuth.SignUpdb(c, req)
 
@@ -35,6 +44,13 @@ func (u *AuthServiceImpl) SignUpservice(c *gin.Context, req *models.User) *model
 }
 
 func (u *AuthServiceImpl) Loginservice(c *gin.Context, req *models.UserLogin) (*models.TokenPair, error) {
+
+	// Validate email format using regex
+	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	matched := regexp.MustCompile(emailRegex).MatchString(req.Email)
+	if !matched {
+		return nil, errors.New("Invalid email format")
+	}
 
 	user, err := u.userAuth.FindUserByEmaildb(req.Email)
 	if err != nil {
@@ -108,14 +124,14 @@ func (a *AuthServiceImpl) RefreshAccessTokenservice(c *gin.Context) (string, err
 	return newAccessTokenString, nil
 }
 
-func (s *AuthServiceImpl) SearchUserservice(ctx *gin.Context, query string) (bool, error) {
+func (s *AuthServiceImpl) SearchUserservice(ctx *gin.Context, username string) (bool, error) {
 	// Basic validation
-	if query == "" {
+	if username == "" {
 		return false, errors.New("query cannot be empty")
 	}
 
 	// Call the repository to check if the user exists
-	exists, err := s.userAuth.SearchUserdb(ctx, query)
+	exists, err := s.userAuth.SearchUserdb(ctx, username)
 	if err != nil {
 		return false, fmt.Errorf("failed to search user: %w", err)
 	}
@@ -123,10 +139,4 @@ func (s *AuthServiceImpl) SearchUserservice(ctx *gin.Context, query string) (boo
 	return exists, nil
 }
 
-func (s *AuthServiceImpl)SendMessageservice(c *gin.Context, sID string, message models.Message) error{
-	err := s.userAuth.SendMessagedb(c,sID, message)
-	if err != nil {
-		return fmt.Errorf("failed to send message: %w", err)
-	}
-	return nil
-}
+

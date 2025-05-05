@@ -1,25 +1,21 @@
 package userserviceimpl
 
 import (
-	"github.com/AliMumtaz001/Go_Chat_App/database"
-	"github.com/AliMumtaz001/Go_Chat_App/models"
-	"github.com/gin-gonic/gin"
+	"github.com/AliMumtaz001/Go_Chat_App/database/mongodb"
 )
 
 type UserServiceImpl struct {
-	UserAuth database.Storage
+	messageAuth mongodb.Storage
 }
 
-func (u *UserServiceImpl) SearchUsers(ctx *gin.Context, query string) ([]models.User, error) {
-	return []models.User{}, nil
-}
-
-func NewUserService(input database.Storage) UserService {
+func NewUserService(input mongodb.Storage) *UserServiceImpl {
 	return &UserServiceImpl{
-		UserAuth: input,
+		messageAuth: input,
 	}
 }
 
 type NewUserServiceImpl struct {
-	UserAuth database.Storage
+	messageAuth mongodb.Storage
 }
+
+var _ UserService = &UserServiceImpl{}
