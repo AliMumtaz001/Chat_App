@@ -66,7 +66,7 @@ func (r *Router) RefreshKeyreq(c *gin.Context) {
 
 func (r *Router) SearchUserreq(c *gin.Context) {
 	// Get query parameter (e.g., email or username)
-	username := c.Query("q")
+	username := c.Query("username")
 	if username == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter 'q' is required"})
 		return
