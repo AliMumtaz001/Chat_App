@@ -11,4 +11,6 @@ func (r *Router) defineRoutes() {
 	r.Engine.GET("/search-user", r.SearchUserreq)
 	r.Engine.POST("/sendmessage", auth.AuthMiddleware(), r.SendMessagereq)
 	r.Engine.GET("/getmessage", auth.AuthMiddleware(), r.GetMessagereq)
+	r.Engine.PUT("/update-message/:_id", auth.AuthMiddleware(), r.UpdateMessagereq)
+	r.Engine.POST("/delete-message/:_id", auth.AuthMiddleware(), r.DeleteMessagereq)
 }

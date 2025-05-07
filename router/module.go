@@ -2,7 +2,7 @@ package routes
 
 import (
 	authservice "github.com/AliMumtaz001/Go_Chat_App/api/auth_service"
-	userservice "github.com/AliMumtaz001/Go_Chat_App/api/user_service"
+	userservice "github.com/AliMumtaz001/Go_Chat_App/api/message_service"
 	"github.com/gin-gonic/gin"
 )
 

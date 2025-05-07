@@ -4,7 +4,7 @@ import (
 	"log"
 
 	authserviceimpl "github.com/AliMumtaz001/Go_Chat_App/api/auth_service"
-	userserviceimpl "github.com/AliMumtaz001/Go_Chat_App/api/user_service"
+	userserviceimpl "github.com/AliMumtaz001/Go_Chat_App/api/message_service"
 	"github.com/AliMumtaz001/Go_Chat_App/database/mongodb"
 	"github.com/AliMumtaz001/Go_Chat_App/database/postgresdb"
 	routes "github.com/AliMumtaz001/Go_Chat_App/router"

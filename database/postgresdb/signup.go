@@ -2,38 +2,12 @@ package postgresdb
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"regexp"
 
 	"github.com/AliMumtaz001/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
 )
-
-type StorageImpl struct {
-	db *sql.DB
-}
-
-func NewStorage(db *sql.DB) Storage {
-	return &StorageImpl{
-		db: db,
-	}
-}
-
-func (u *StorageImpl) FindUserByEmaildb(email string) (*models.UserLogin, error) {
-	fmt.Println(59)
-
-	var user models.UserLogin
-
-	err := u.db.QueryRow("SELECT id, username, email, password FROM employeedata WHERE email=$1", email).Scan(&user.Id, &user.Username, &user.Email, &user.Password)
-	if err != nil {
-		fmt.Println(err, "22")
-		return nil, err
-	}
-
-	return &user, nil
-
-}
 
 func (u *StorageImpl) SignUpdb(c *gin.Context, req *models.User) *models.User {
 
@@ -71,19 +45,4 @@ func (u *StorageImpl) SignUpdb(c *gin.Context, req *models.User) *models.User {
 	}
 
 	return req
-}
-
-// UserService represents a service with a database connection
-type UserService struct {
-	Db *sql.DB
-}
-
-func (r *StorageImpl) SearchUserdb(c *gin.Context, query string) (bool, error) {
-	var exists bool
-	querySQL := `SELECT EXISTS (SELECT 1 FROM employeedata WHERE username = $1)`
-	err := r.db.QueryRowContext(c, querySQL, query).Scan(&exists)
-	if err != nil {
-		return false, fmt.Errorf("failed to query user: %w", err)
-	}
-	return exists, nil
 }
