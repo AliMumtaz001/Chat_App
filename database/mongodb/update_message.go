@@ -20,8 +20,7 @@ func (s *StorageMongoImpl) UpdateMessagedb(c *gin.Context, messageID primitive.O
 	var doc bson.M
 	err := collection.FindOne(c, bson.M{"_id": messageID}).Decode(&doc)
 	if err == mongo.ErrNoDocuments {
-		fmt.Println("Document not found for _id:", messageID)
-		return fmt.Errorf("no message found with the given ID")
+		return fmt.Errorf("document not found for _id: %v", messageID)
 	}
 	if err != nil {
 		return fmt.Errorf("error checking document: %v", err)

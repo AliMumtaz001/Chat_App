@@ -16,8 +16,7 @@ func (m *StorageMongoImpl) DeleteMessagedb(c *gin.Context, messageID primitive.O
 	var doc bson.M
 	err := collection.FindOne(c, bson.M{"_id": messageID}).Decode(&doc)
 	if err == mongo.ErrNoDocuments {
-		fmt.Println("Document not found for _id:", messageID)
-		return fmt.Errorf("no message found with the given ID")
+		return fmt.Errorf("Document not found for _id:", messageID)
 	}
 	if err != nil {
 		return fmt.Errorf("error checking document: %v", err)
