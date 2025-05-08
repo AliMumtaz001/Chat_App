@@ -42,7 +42,6 @@ func (m *StorageMongoImpl) DeleteMessagedb(c *gin.Context, messageID primitive.O
 			},
 		},
 	}
-	fmt.Println("Filter:", filter)
 	result, err := collection.DeleteOne(c, filter)
 	if err != nil {
 		return fmt.Errorf("delete error: %v", err)
@@ -50,6 +49,5 @@ func (m *StorageMongoImpl) DeleteMessagedb(c *gin.Context, messageID primitive.O
 	if result.DeletedCount == 0 {
 		return fmt.Errorf("no message found with the given ID or user is not authorized")
 	}
-	fmt.Println("Result: DeletedCount:", result.DeletedCount)
 	return nil
 }

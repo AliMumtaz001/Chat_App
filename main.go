@@ -1,5 +1,13 @@
 package main
 
+// @title Go Chat App API
+// @version 1.0
+// @description This is a chat application API built with Go and Gin.
+// @host localhost:8002
+// @BasePath /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 import (
 	"log"
 

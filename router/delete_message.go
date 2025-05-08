@@ -1,8 +1,22 @@
 package routes
+
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 )
+
+// DeleteMessagereq godoc
+// @Summary      Delete a message
+// @Description  Delete a message by ID
+// @Tags         messages
+// @Produce      json
+// @Param        _id  path      string  true  "Message ID"
+// @Success      200
+// @Failure      401
+// @Failure      500
+// @Security     BearerAuth
+// @Router       /delete-message/{_id} [post]
 func (r *Router) DeleteMessagereq(c *gin.Context) {
 	messageID := c.Param("_id")
 	userID, exists := c.Get("userID")
