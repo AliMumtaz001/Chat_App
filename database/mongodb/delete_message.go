@@ -22,7 +22,6 @@ func (m *StorageMongoImpl) DeleteMessagedb(c *gin.Context, messageID primitive.O
 	if err != nil {
 		return fmt.Errorf("error checking document: %v", err)
 	}
-	fmt.Println("Document found:", doc)
 	userIDInt, err := strconv.Atoi(userID)
 	if err != nil {
 		userIDInt = 0 
@@ -31,14 +30,10 @@ func (m *StorageMongoImpl) DeleteMessagedb(c *gin.Context, messageID primitive.O
 		"_id": messageID,
 		"$or": []bson.M{
 			{
-				"sender_id": bson.M{
-					"$in": []interface{}{userID, userIDInt},
-				},
+				"sender_id": userIDInt,
 			},
 			{
-				"receiver_id": bson.M{
-					"$in": []interface{}{userID, userIDInt},
-				},
+				"receiver_id": userIDInt,
 			},
 		},
 	}
@@ -50,4 +45,5 @@ func (m *StorageMongoImpl) DeleteMessagedb(c *gin.Context, messageID primitive.O
 		return fmt.Errorf("no message found with the given ID or user is not authorized")
 	}
 	return nil
+	
 }

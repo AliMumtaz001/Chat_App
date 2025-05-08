@@ -26,7 +26,6 @@ func (s *StorageMongoImpl) UpdateMessagedb(c *gin.Context, messageID primitive.O
 	if err != nil {
 		return fmt.Errorf("error checking document: %v", err)
 	}
-	fmt.Println("Document found:", doc)
 	userIDInt, err := strconv.Atoi(userID)
 	if err != nil {
 		userIDInt = 0
@@ -35,14 +34,10 @@ func (s *StorageMongoImpl) UpdateMessagedb(c *gin.Context, messageID primitive.O
 		"_id": messageID,
 		"$or": []bson.M{
 			{
-				"sender_id": bson.M{
-					"$in": []interface{}{userID, userIDInt},
-				},
+				"sender_id": userIDInt,
 			},
 			{
-				"receiver_id": bson.M{
-					"$in": []interface{}{userID, userIDInt},
-				},
+				"receiver_id": userIDInt,
 			},
 		},
 	}
