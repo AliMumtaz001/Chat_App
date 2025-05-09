@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/AliMumtaz001/Go_Chat_App/auth"
-	_ "github.com/AliMumtaz001/Go_Chat_App/docs"
+	"github.com/AliMumtazDev/Go_Chat_App/auth"
+	_ "github.com/AliMumtazDev/Go_Chat_App/docs"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )

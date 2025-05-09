@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/AliMumtaz001/Go_Chat_App/models"
+	"github.com/AliMumtazDev/Go_Chat_App/models"
 )
 
 type StorageImpl struct {

@@ -3,11 +3,9 @@ package userserviceimpl
 import (
 	"fmt"
 
-	"github.com/AliMumtaz001/Go_Chat_App/models"
+	"github.com/AliMumtazDev/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
 )
-
-
 
 func (s *UserServiceImpl) GetMessageservice(c *gin.Context, senderID, receiverID string) ([]models.Message, error) {
 	messages, err := s.messageAuth.GetMessagedb(c, senderID, receiverID)

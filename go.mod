@@ -1,4 +1,4 @@
-module github.com/AliMumtaz001/Go_Chat_App
+module github.com/AliMumtazDev/Go_Chat_App
 
 go 1.23.0
 

@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/AliMumtaz001/Go_Chat_App/models"
+	"github.com/AliMumtazDev/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,11 +21,7 @@ import (
 // @Router       /update-message/{_id} [put]
 func (r *Router) UpdateMessagereq(c *gin.Context) {
 	messageID := c.Param("_id")
-	userID, exists := c.Get("userID")
-	if !exists {
-		c.JSON(401, gin.H{"error": "User not authenticated"})
-		return
-	}
+
 	var message models.Message
 	if err := c.ShouldBindJSON(&message); err != nil {
 		c.JSON(400, gin.H{"error": "Invalid request body"})
@@ -39,7 +35,7 @@ func (r *Router) UpdateMessagereq(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "Missing new message"})
 		return
 	}
-	err := r.UserService.UpdateMessageservice(c, messageID, message, userID.(string))
+	err := r.UserService.UpdateMessageservice(c, messageID, message)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Internal server error: " + err.Error()})
 		return

@@ -4,14 +4,19 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/AliMumtaz001/Go_Chat_App/models"
+	"github.com/AliMumtazDev/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (s *StorageMongoImpl) UpdateMessagedb(c *gin.Context, messageID primitive.ObjectID, message models.Message, userID string) error {
+func (s *StorageMongoImpl) UpdateMessagedb(c *gin.Context, messageID primitive.ObjectID, message models.Message) error {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(401, gin.H{"error": "User not authenticated"})
+		return fmt.Errorf("user not authenticated")
+	}
 	if s.mongoClient == nil {
 		return fmt.Errorf("mongo client is not initialized")
 	}
@@ -25,7 +30,11 @@ func (s *StorageMongoImpl) UpdateMessagedb(c *gin.Context, messageID primitive.O
 	if err != nil {
 		return fmt.Errorf("error checking document: %v", err)
 	}
-	userIDInt, err := strconv.Atoi(userID)
+	userIDStr, ok := userID.(string)
+	if !ok {
+		return fmt.Errorf("userID is not a string")
+	}
+	userIDInt, err := strconv.Atoi(userIDStr)
 	if err != nil {
 		userIDInt = 0
 	}
