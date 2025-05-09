@@ -38,5 +38,7 @@ func (r *Router) SendMessagereq(c *gin.Context) {
 		return
 	}
 
+	
+
 	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully", "id": userID})
 }
