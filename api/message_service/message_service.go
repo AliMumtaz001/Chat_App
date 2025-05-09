@@ -1,7 +1,7 @@
 package userserviceimpl
 
 import (
-	"github.com/AliMumtaz001/Go_Chat_App/database/mongodb"
+	"github.com/AliMumtazDev/Go_Chat_App/database/mongodb"
 )
 
 type UserServiceImpl struct {

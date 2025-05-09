@@ -5,10 +5,22 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/AliMumtaz001/Go_Chat_App/models"
+	"github.com/AliMumtazDev/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
 )
 
+// SendMessagereq godoc
+// @Summary      Send a message
+// @Description  Send a message from authenticated user to another user
+// @Tags         messages
+// @Accept       json
+// @Produce      json
+// @Param        message  body      models.Message  true  "Message data"
+// @Success      200
+// @Failure      400
+// @Failure      401
+// @Security     BearerAuth
+// @Router       /sendmessage [post]
 func (r *Router) SendMessagereq(c *gin.Context) {
 	var message models.Message
 
@@ -18,7 +30,7 @@ func (r *Router) SendMessagereq(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
-	
+
 	sID, _ := strconv.ParseInt(userID, 10, 64)
 	err := r.UserService.SendMessageservice(c, sID, message.ReceiverID, message)
 	if err != nil {

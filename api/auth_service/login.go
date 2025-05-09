@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/AliMumtaz001/Go_Chat_App/auth"
-	"github.com/AliMumtaz001/Go_Chat_App/models"
+	"github.com/AliMumtazDev/Go_Chat_App/auth"
+	"github.com/AliMumtazDev/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )

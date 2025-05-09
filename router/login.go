@@ -3,10 +3,21 @@ package routes
 import (
 	"net/http"
 
-	"github.com/AliMumtaz001/Go_Chat_App/models"
+	"github.com/AliMumtazDev/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
 )
 
+// Loginreq godoc
+// @Summary      Login user
+// @Description  Authenticate user and return JWT token
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        login  body      models.UserLoginReq  true  "Login credentials"
+// @Success      200
+// @Failure      400
+// @Failure      401
+// @Router       /login [post]
 func (r *Router) Loginreq(c *gin.Context) {
 	var req models.UserLoginReq
 	var login models.UserLogin

@@ -1,13 +1,21 @@
 package main
 
+// @title Go Chat App API
+// @version 1.0
+// @description This is a chat application API built with Go and Gin.
+// @host localhost:8002
+// @BasePath /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 import (
 	"log"
 
-	authserviceimpl "github.com/AliMumtaz001/Go_Chat_App/api/auth_service"
-	userserviceimpl "github.com/AliMumtaz001/Go_Chat_App/api/message_service"
-	"github.com/AliMumtaz001/Go_Chat_App/database/mongodb"
-	"github.com/AliMumtaz001/Go_Chat_App/database/postgresdb"
-	routes "github.com/AliMumtaz001/Go_Chat_App/router"
+	authserviceimpl "github.com/AliMumtazDev/Go_Chat_App/api/auth_service"
+	userserviceimpl "github.com/AliMumtazDev/Go_Chat_App/api/message_service"
+	"github.com/AliMumtazDev/Go_Chat_App/database/mongodb"
+	"github.com/AliMumtazDev/Go_Chat_App/database/postgresdb"
+	routes "github.com/AliMumtazDev/Go_Chat_App/router"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )

@@ -1,7 +1,10 @@
 package routes
 
 import (
-	"github.com/AliMumtaz001/Go_Chat_App/auth"
+	"github.com/AliMumtazDev/Go_Chat_App/auth"
+	_ "github.com/AliMumtazDev/Go_Chat_App/docs"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func (r *Router) defineRoutes() {
@@ -13,4 +16,5 @@ func (r *Router) defineRoutes() {
 	r.Engine.GET("/getmessage", auth.AuthMiddleware(), r.GetMessagereq)
 	r.Engine.PUT("/update-message/:_id", auth.AuthMiddleware(), r.UpdateMessagereq)
 	r.Engine.POST("/delete-message/:_id", auth.AuthMiddleware(), r.DeleteMessagereq)
+	r.Engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

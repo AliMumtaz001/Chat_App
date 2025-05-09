@@ -6,6 +6,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// SearchUserreq godoc
+// @Summary      Search for a user
+// @Description  Check if a user exists by username
+// @Tags         users
+// @Produce      json
+// @Param        username  query     string  true  "Username to search"
+// @Success      200
+// @Failure      400
+// @Failure      404
+// @Failure      500
+// @Router       /search-user [get]
 func (r *Router) SearchUserreq(c *gin.Context) {
 	username := c.Query("username")
 	if username == "" {
