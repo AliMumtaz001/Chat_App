@@ -20,8 +20,8 @@ func (s *StorageMongoImpl) UpdateMessagedb(c *gin.Context, messageID primitive.O
 	if s.mongoClient == nil {
 		return fmt.Errorf("mongo client is not initialized")
 	}
-	db := s.mongoClient.Database("chatdb")
-	collection := db.Collection("sendmsg")
+	
+	collection := s.mongoClient.Database("chatdb").Collection("sendmsg")
 	var doc bson.M
 	err := collection.FindOne(c, bson.M{"_id": messageID}).Decode(&doc)
 	if err == mongo.ErrNoDocuments {

@@ -1,18 +1,25 @@
 package mongodb
+
 import (
 	"fmt"
 	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
-func (m *StorageMongoImpl) DeleteMessagedb(c *gin.Context, messageID primitive.ObjectID, userID string) error {
+
+func (m *StorageMongoImpl) DeleteMessagedb(c *gin.Context, messageID primitive.ObjectID) error {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(401, gin.H{"error": "User not authenticated"})
+		return fmt.Errorf("user not authenticated")
+	}
 	if m.mongoClient == nil {
 		return fmt.Errorf("mongo client is not initialized")
 	}
-	db := m.mongoClient.Database("chatdb")
-	collection := db.Collection("sendmsg")
+	collection := m.mongoClient.Database("chatdb").Collection("sendmsg")
 	var doc bson.M
 	err := collection.FindOne(c, bson.M{"_id": messageID}).Decode(&doc)
 	if err == mongo.ErrNoDocuments {
@@ -21,9 +28,13 @@ func (m *StorageMongoImpl) DeleteMessagedb(c *gin.Context, messageID primitive.O
 	if err != nil {
 		return fmt.Errorf("error checking document: %v", err)
 	}
-	userIDInt, err := strconv.Atoi(userID)
+	userIDStr, ok := userID.(string)
+	if !ok {
+		return fmt.Errorf("userID is not a string")
+	}
+	userIDInt, err := strconv.Atoi(userIDStr)
 	if err != nil {
-		userIDInt = 0 
+		userIDInt = 0
 	}
 	filter := bson.M{
 		"_id": messageID,
@@ -44,5 +55,4 @@ func (m *StorageMongoImpl) DeleteMessagedb(c *gin.Context, messageID primitive.O
 		return fmt.Errorf("no message found with the given ID or user is not authorized")
 	}
 	return nil
-	
 }

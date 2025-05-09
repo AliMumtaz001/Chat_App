@@ -13,3 +13,10 @@ type Message struct {
 	Content    string             `bson:"content" json:"content"`
 	Timestamp  time.Time          `bson:"time_stamp" json:"timestamp"`
 }
+
+type WebSocketMessage struct {
+	Type    string `json:"type"`    // "sendmessage" or "getmessage"
+	Content string `json:"content"` // Message content
+	To      string `json:"to"`      // Recipient ID
+	From    string `json:"from"`    // Sender ID
+}
