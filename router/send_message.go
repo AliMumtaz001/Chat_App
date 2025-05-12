@@ -10,6 +10,18 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// SendMessagereq godoc
+// @Summary      Send a message
+// @Description  Send a message from authenticated user to another user
+// @Tags         messages
+// @Accept       json
+// @Produce      json
+// @Param        message  body      models.Message  true  "Message data"
+// @Success      200
+// @Failure      400
+// @Failure      401
+// @Security     BearerAuth
+// @Router       /sendmessage [post]
 func (r *Router) SendMessagereq(c *gin.Context) {
 	var message models.Message
 	userID := c.MustGet("userID").(string)
