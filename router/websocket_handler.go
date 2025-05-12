@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"sync"
 
 	"github.com/AliMumtazDev/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
@@ -17,9 +16,6 @@ var upgrader = websocket.Upgrader{
 		return true
 	},
 }
-
-var connections = make(map[string]*websocket.Conn)
-var mutex = &sync.Mutex{}
 var userMsg models.Message
 
 func (r *Router) WebSocketHandler(c *gin.Context) {
@@ -32,12 +28,11 @@ func (r *Router) WebSocketHandler(c *gin.Context) {
 	mutex.Lock()
 	if _, exists := connections[userID]; exists {
 		mutex.Unlock()
-		c.JSON(http.StatusConflict, gin.H{"error": "Connection already exists for this user"})
+		fmt.Println(http.StatusConflict, gin.H{"error": "Connection already exists for this user"})
 		return
 	}
 
 	mutex.Unlock()
-
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upgrade connection"})
@@ -47,7 +42,6 @@ func (r *Router) WebSocketHandler(c *gin.Context) {
 	mutex.Lock()
 	connections[userID] = conn
 	mutex.Unlock()
-
 	fmt.Printf("User %s connected\n", userID)
 
 	defer func() {
@@ -71,29 +65,18 @@ func (r *Router) WebSocketHandler(c *gin.Context) {
 		}
 		fmt.Printf("Received message: %s\n", msg)
 
-		sID, err := strconv.ParseInt(userID, 10, 64)
-		if err != nil {
-			conn.WriteMessage(websocket.TextMessage, []byte("Invalid userID format"))
-			continue
-		}
-		fmt.Printf("Sender ID: %d\n", sID)
-
 		switch message.Type {
 		case "sendmessage":
-			receiverID, err := strconv.ParseInt(message.To, 10, 64)
+			var dbMessage models.Message
+			dbMessage.SenderID, _ = strconv.ParseInt(userID, 10, 64)
+			dbMessage.ReceiverID, err = strconv.ParseInt(message.To, 10, 64)
 			if err != nil {
 				conn.WriteMessage(websocket.TextMessage, []byte("Invalid recipient ID format"))
 				continue
 			}
-			fmt.Printf("Recipient ID: %d\n", receiverID)
-			dbMessage := models.Message{
-				SenderID:   sID,
-				ReceiverID: receiverID,
-				Content:    message.Content,
-			}
-			fmt.Printf("Message content: %s\n", dbMessage.Content)
+			dbMessage.Content = message.Content
 
-			err = r.UserService.SendMessageservice(c, sID, receiverID, dbMessage)
+			err := r.UserService.SendMessageservice(c, dbMessage.SenderID, dbMessage.ReceiverID, dbMessage)
 			if err != nil {
 				conn.WriteMessage(websocket.TextMessage, []byte("Failed to save message"))
 				continue
@@ -111,20 +94,19 @@ func (r *Router) WebSocketHandler(c *gin.Context) {
 			fmt.Printf("Message sent to recipient %s\n", message.To)
 
 		case "getmessage":
-		
-			messages, err := r.UserService.GetMessageservice(c, userID, message.To)
+			senderID := userID
+			receiverID := message.To
+			messages, err := r.UserService.GetMessageservice(c, senderID, receiverID)
 			if err != nil {
-				conn.WriteMessage(websocket.TextMessage, []byte("Failed to fetch messages"))
+				conn.WriteMessage(websocket.TextMessage, []byte("Failed to fetch messages: "+err.Error()))
 				continue
 			}
-
 			messagesJSON, err := json.Marshal(messages)
 			if err != nil {
-				conn.WriteMessage(websocket.TextMessage, []byte("Failed to encode messages"))
+				conn.WriteMessage(websocket.TextMessage, []byte("Failed to encode messages: "+err.Error()))
 				continue
 			}
 			conn.WriteMessage(websocket.TextMessage, messagesJSON)
-
 		default:
 			conn.WriteMessage(websocket.TextMessage, []byte("Unknown message type"))
 		}
