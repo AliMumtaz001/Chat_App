@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"sync"
@@ -19,6 +20,7 @@ var upgrader = websocket.Upgrader{
 
 var connections = make(map[string]*websocket.Conn)
 var mutex = &sync.Mutex{}
+var userMsg models.Message
 
 func (r *Router) WebSocketHandler(c *gin.Context) {
 	userID := c.Query("userID")
@@ -33,6 +35,7 @@ func (r *Router) WebSocketHandler(c *gin.Context) {
 		c.JSON(http.StatusConflict, gin.H{"error": "Connection already exists for this user"})
 		return
 	}
+
 	mutex.Unlock()
 
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -45,11 +48,14 @@ func (r *Router) WebSocketHandler(c *gin.Context) {
 	connections[userID] = conn
 	mutex.Unlock()
 
+	fmt.Printf("User %s connected\n", userID)
+
 	defer func() {
 		mutex.Lock()
 		delete(connections, userID)
 		mutex.Unlock()
 		conn.Close()
+		fmt.Printf("User %s disconnected\n", userID)
 	}()
 
 	for {
@@ -63,32 +69,31 @@ func (r *Router) WebSocketHandler(c *gin.Context) {
 			conn.WriteMessage(websocket.TextMessage, []byte("Invalid message format"))
 			continue
 		}
+		fmt.Printf("Received message: %s\n", msg)
 
-		message.From = userID
+		sID, err := strconv.ParseInt(userID, 10, 64)
+		if err != nil {
+			conn.WriteMessage(websocket.TextMessage, []byte("Invalid userID format"))
+			continue
+		}
+		fmt.Printf("Sender ID: %d\n", sID)
 
 		switch message.Type {
 		case "sendmessage":
-			sID, err := strconv.ParseInt(userID, 10, 64)
-			if err != nil {
-				conn.WriteMessage(websocket.TextMessage, []byte("Invalid userID format"))
-				continue
-			}
-			rID, err := strconv.ParseInt(message.To, 10, 64)
+			receiverID, err := strconv.ParseInt(message.To, 10, 64)
 			if err != nil {
 				conn.WriteMessage(websocket.TextMessage, []byte("Invalid recipient ID format"))
 				continue
 			}
-			userID, err := strconv.ParseInt(userID, 10, 64)
-			if err != nil {
-				conn.WriteMessage(websocket.TextMessage, []byte("Invalid userID format"))
-			}
-			
+			fmt.Printf("Recipient ID: %d\n", receiverID)
 			dbMessage := models.Message{
-				SenderID:   userID,
-				ReceiverID: rID,
+				SenderID:   sID,
+				ReceiverID: receiverID,
 				Content:    message.Content,
 			}
-			err = r.UserService.SendMessageservice(c, sID, rID, dbMessage)
+			fmt.Printf("Message content: %s\n", dbMessage.Content)
+
+			err = r.UserService.SendMessageservice(c, sID, receiverID, dbMessage)
 			if err != nil {
 				conn.WriteMessage(websocket.TextMessage, []byte("Failed to save message"))
 				continue
@@ -103,10 +108,10 @@ func (r *Router) WebSocketHandler(c *gin.Context) {
 					conn.WriteMessage(websocket.TextMessage, []byte("Failed to deliver message"))
 				}
 			}
-
-			conn.WriteMessage(websocket.TextMessage, msg)
+			fmt.Printf("Message sent to recipient %s\n", message.To)
 
 		case "getmessage":
+		
 			messages, err := r.UserService.GetMessageservice(c, userID, message.To)
 			if err != nil {
 				conn.WriteMessage(websocket.TextMessage, []byte("Failed to fetch messages"))
