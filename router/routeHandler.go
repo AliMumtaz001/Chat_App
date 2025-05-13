@@ -20,10 +20,7 @@ func (r *Router) defineRoutes() {
 }
 
 func (r *Router) socketRoutes() {
-	// WebSocket route for handling WebSocket connections
 	r.Engine.GET("/ws", func(c *gin.Context) {
 		r.WebSocket.RegisterWebSocketRoute(c)
 	})
-
-	// Add more WebSocket-specific routes here if needed
 }

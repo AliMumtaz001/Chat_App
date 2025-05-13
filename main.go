@@ -22,13 +22,11 @@ import (
 )
 
 func main() {
-	// Load environment variables
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Panicf("Error loading .env file: %s", err)
 	}
 
-	// Initialize database connections
 	connpostgres, err := postgresdb.PostgresConn()
 	if err != nil {
 		log.Panicf("Error connecting to PostgreSQL: %s", err)
@@ -38,7 +36,6 @@ func main() {
 		log.Panicf("Error connecting to MongoDB: %s", err)
 	}
 
-	// Initialize services
 	userdb := postgresdb.NewStorage(connpostgres)
 	messagedb := mongodb.NewStorage(connmongo)
 	authService := authserviceimpl.NewAuthService(authserviceimpl.NewAuthServiceImpl{
@@ -46,12 +43,20 @@ func main() {
 	})
 	userService := userserviceimpl.NewUserService(messagedb)
 	// Create an instance of WebSocketServiceImpl
-	webSocketImpl := socket.WebSocketServiceImpl{}
-	websocket := socket.NewWebSocketService(webSocketImpl)
-	// Initialize Gin router
-	router := routes.NewRouter(authService, userService, websocket, true)
+	// webSocketImpl := socket.WebSocketServiceImpl{}
+	websocket := socket.NewWebSocketService(messagedb)
+	// router := routes.NewRouter(authService, userService, websocket, true)
+	// log.Println("Server is running on port 8005")
+	httpRouter := routes.NewRouter(authService, userService, websocket, false)
+	go func() {
+		if err := httpRouter.Engine.Run(":8005"); err != nil {
+			log.Fatalf("HTTP server failed to start: %s", err)
+		}
+	}()
 
-	// Start the server
-	log.Println("Server is running on port 8080")
-	log.Fatal(router.Engine.Run(":8080")) // Use Gin's router to start the server
+	webSocketRouter := routes.NewRouter(authService, userService, websocket, true)
+	err = webSocketRouter.Engine.Run(":8006")
+	if err != nil {
+		log.Fatalf("Websocket server failed to start: %s", err)
+	}
 }

@@ -49,7 +49,6 @@ func (impl WebSocketImpl) RegisterWebSocketRoute(c *gin.Context) {
 			log.Printf("Error reading message: %v", err)
 			return
 		}
-		// Echo the message back to the client (for simplicity)
 		err = ws.SendMessage(client, message)
 		if err != nil {
 			log.Printf("Error sending message: %v", err)
