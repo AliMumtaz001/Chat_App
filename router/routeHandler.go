@@ -2,7 +2,7 @@ package routes
 
 import (
 	"github.com/AliMumtazDev/Go_Chat_App/auth"
-	_ "github.com/AliMumtazDev/Go_Chat_App/docs"
+	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -17,5 +17,13 @@ func (r *Router) defineRoutes() {
 	r.Engine.PUT("/update-message/:_id", auth.AuthMiddleware(), r.UpdateMessagereq)
 	r.Engine.POST("/delete-message/:_id", auth.AuthMiddleware(), r.DeleteMessagereq)
 	r.Engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	r.Engine.GET("/ws", r.WebSocketHandler)
+}
+
+func (r *Router) socketRoutes() {
+	// WebSocket route for handling WebSocket connections
+	r.Engine.GET("/ws", func(c *gin.Context) {
+		r.WebSocket.RegisterWebSocketRoute(c)
+	})
+
+	// Add more WebSocket-specific routes here if needed
 }
