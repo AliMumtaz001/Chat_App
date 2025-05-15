@@ -27,17 +27,20 @@
 // 	}
 // }
 
-package socket
+package socketimpl
 
 import (
 	"log"
 	"net/http"
 
+	upgradeconn "github.com/AliMumtazDev/Go_Chat_App/web_socket_app/database"
+	socketimpl "github.com/AliMumtazDev/socket/websocket_impl"
 	"github.com/gin-gonic/gin"
 )
 
-func (impl WebSocketImpl) RegisterWebSocketRoute(c *gin.Context) {
-	ws := NewWebSocketImpl()
+func (impl *upgradeconn.WebSocketImpl) RegisterWebSocketRoute(c *gin.Context) {
+	ws := socketimpl.NewWebSocketImpl()
+	//NewWebSocketImpl()
 	client, err := ws.UpgradeConnection(c.Writer, c.Request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upgrade connection"})

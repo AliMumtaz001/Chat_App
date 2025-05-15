@@ -71,6 +71,7 @@ func (r *Router) SendMessagereq(c *gin.Context) {
 
 // notifyRecipient handles notifying the recipient via WebSocket
 func (r *Router) NotifyRecipient(userID string, message models.Message) {
+	// socket.ConnMutex.Lock()
 	socket.ConnMutex.Lock()
 	defer socket.ConnMutex.Unlock()
 
@@ -99,7 +100,9 @@ func (r *Router) NotifyRecipient(userID string, message models.Message) {
 	}
 
 	// Send the WebSocket message
-	if err := r.WebSocket.SendMessage(recipientConn, msgBytes); err != nil {
+	// if err := r.WebSocketService.SendMessage(recipientConn, msgBytes); err != nil {
+		if err := socket.SendMessage(recipientConn, msgBytes); err != nil {
+		// if err := r.socketimpl.SendMessage(recipientConn, msgBytes); err != nil {
 		fmt.Printf("Failed to send WebSocket message to recipient %s: %v\n", recipientID, err)
 	} else {
 		fmt.Printf("Message sent to recipient %s via WebSocket\n", recipientID)

@@ -4,6 +4,8 @@ go 1.23.0
 
 toolchain go1.24.2
 
+replace github.com/AliMumtazDev/socket => ../web_socket_app 
+
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible

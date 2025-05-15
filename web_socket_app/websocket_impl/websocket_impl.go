@@ -1,7 +1,7 @@
-package socket
+package socketimpl
 
 import (
-	"github.com/AliMumtazDev/Go_Chat_App/database/mongodb"
+	upgradeconn "github.com/AliMumtazDev/socket/database"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -14,14 +14,14 @@ type Client struct {
 type WebSocketServiceImpl struct {
 	clients map[string]*Client
 	MongoDB mongodb.Storage
-	wsImpl  *WebSocketImpl 
-}
+	wsImpl  *socket.WebSocketService
+} //*socket.WebSocketService
 
-func NewWebSocketService(ws mongodb.Storage) WebSocketService {
+func NewWebSocketService(ws mongodb.Storage) socket.WebSocketService {
 	return &WebSocketServiceImpl{
-		clients: make(map[string]*Client), 
+		clients: make(map[string]*Client),
 		MongoDB: ws,
-		wsImpl:  NewWebSocketImpl(), 
+		wsImpl:  upgradeconn.NewWebSocketImpl(),
 	}
 }
 
@@ -37,4 +37,4 @@ func (impl *WebSocketServiceImpl) RegisterWebSocketRoute(c *gin.Context) {
 	impl.wsImpl.RegisterWebSocketRoute(c)
 }
 
-var _ WebSocketService = &WebSocketServiceImpl{}
+var _ socket.WebSocketService = &WebSocketServiceImpl{}

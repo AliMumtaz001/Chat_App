@@ -1,4 +1,4 @@
-package socket
+package socketimpl
 
 import (
 	"log"
@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (ws *WebSocketImpl) SendMessage(client *Client, message []byte) error {
+func (ws *WebSocketServiceImpl) SendMessage(client *Client, message []byte) error {
 	err := client.Conn.WriteMessage(websocket.TextMessage, message)
 	if err != nil {
 		log.Printf("Failed to send message to %s: %v", client.UserID, err)

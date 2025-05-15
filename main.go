@@ -16,7 +16,6 @@ import (
 	"github.com/AliMumtazDev/Go_Chat_App/database/mongodb"
 	"github.com/AliMumtazDev/Go_Chat_App/database/postgresdb"
 	routes "github.com/AliMumtazDev/Go_Chat_App/router"
-	socket "github.com/AliMumtazDev/Go_Chat_App/web_socket"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
