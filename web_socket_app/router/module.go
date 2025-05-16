@@ -1,23 +1,25 @@
 package routes
 
 import (
+	userserviceimpl "github.com/AliMumtazDev/Go_Chat_App/api/message_service"
+
 	socketinterface "github.com/AliMumtazDev/socket/web_socket"
 	"github.com/gin-gonic/gin"
 )
 
 type SocketRouter struct {
-	Engine *gin.Engine
-	// WebSocket socketinterface.WebSocketService
-	WebSocket   socketinterface.WebSocketService
-	AuthService authservice.AuthService
+	Engine         *gin.Engine
+	WebSocket      socketinterface.WebSocketService
+	Messageservice userserviceimpl.UserService
 }
 
 // func NewRouter(authService authservice.AuthService, userService userservice.UserService, websocket socketinterface.WebSocketService, onlyWS bool) *Router {
-func NewRouter(authService authService.AuthService, userService userservice.UserService, websocket socketinterface.WebSocketService, onlyWS bool) *SocketRouter {
+func NewRouter(userService userserviceimpl.UserService, websocket socketinterface.WebSocketService, onlyWS bool) *SocketRouter {
 	engine := gin.Default()
 	router := &SocketRouter{
-		Engine:    engine,
-		WebSocket: websocket,
+		Engine:         engine,
+		WebSocket:      websocket,
+		Messageservice: userService,
 	}
 	router.SocketRoutes()
 	return router

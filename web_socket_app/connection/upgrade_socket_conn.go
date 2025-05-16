@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	// socket "github.com/AliMumtazDev/socket/models"
+	"github.com/AliMumtazDev/socket/client"
 	socket "github.com/AliMumtazDev/socket/models"
-	socketimpl "github.com/AliMumtazDev/socket/websocket_impl"
 )
 
 var ConnMutex sync.Mutex
@@ -18,7 +18,7 @@ func NewWebSocketImpl() *WebSocketImpl {
 	return &WebSocketImpl{}
 }
 
-func (ws *WebSocketImpl) UpgradeConnection(w http.ResponseWriter, r *http.Request) (*socketimpl.Client, error) {
+func (ws *WebSocketImpl) UpgradeConnection(w http.ResponseWriter, r *http.Request) (*client.Client, error) {
 	conn, err := socket.Upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Printf("Failed to upgrade connection: %v", err)
@@ -27,7 +27,7 @@ func (ws *WebSocketImpl) UpgradeConnection(w http.ResponseWriter, r *http.Reques
 
 	userID := r.URL.Query().Get("userID")
 
-	client := &socketimpl.Client{
+	client := &client.Client{
 		Conn:   conn,
 		UserID: userID,
 	}

@@ -4,7 +4,7 @@ go 1.23.0
 
 toolchain go1.24.2
 
-replace github.com/AliMumtazDev/socket => ../web_socket_app 
+replace github.com/AliMumtazDev/socket => ./web_socket_app 
 
 require (
 	github.com/gin-gonic/gin v1.10.0

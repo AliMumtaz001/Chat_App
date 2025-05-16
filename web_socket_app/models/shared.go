@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"sync"
 
-	socketimpl "github.com/AliMumtazDev/socket/websocket_impl"
+	"github.com/AliMumtazDev/socket/client"
 	"github.com/gorilla/websocket"
 )
 
@@ -17,6 +17,6 @@ var Upgrader = websocket.Upgrader{
 }
 
 var (
-	Connections = make(map[string]*socketimpl.Client)
+	Connections = make(map[string]*client.Client)
 	ConnMutex   = &sync.Mutex{}
 )

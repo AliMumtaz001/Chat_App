@@ -1,13 +1,11 @@
 package routes
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/AliMumtazDev/Go_Chat_App/models"
-	socket "github.com/AliMumtazDev/Go_Chat_App/web_socket"
 	"github.com/gin-gonic/gin"
 )
 
@@ -63,48 +61,48 @@ func (r *Router) SendMessagereq(c *gin.Context) {
 	}
 
 	// Notify the recipient via WebSocket
-	r.NotifyRecipient(userID, message)
+	// r.NotifyRecipient(userID, message)
 
 	// Respond with success
 	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully", "id": userID})
 }
 
 // notifyRecipient handles notifying the recipient via WebSocket
-func (r *Router) NotifyRecipient(userID string, message models.Message) {
-	// socket.ConnMutex.Lock()
-	socket.ConnMutex.Lock()
-	defer socket.ConnMutex.Unlock()
+// func (r *Router) NotifyRecipient(userID string, message models.Message) {
+// 	// socket.ConnMutex.Lock()
+// 	socket.ConnMutex.Lock()
+// 	defer socket.ConnMutex.Unlock()
 
-	recipientID := strconv.FormatInt(message.ReceiverID, 10)
-	fmt.Printf("Attempting to notify recipient: %s\n", recipientID)
+// 	recipientID := strconv.FormatInt(message.ReceiverID, 10)
+// 	fmt.Printf("Attempting to notify recipient: %s\n", recipientID)
 
-	recipientConn, exists := socket.Connections[recipientID]
-	if !exists {
-		fmt.Printf("Recipient %s is not connected via WebSocket\n", recipientID)
-		return
-	}
+// 	recipientConn, exists := socket.Connections[recipientID]
+// 	if !exists {
+// 		fmt.Printf("Recipient %s is not connected via WebSocket\n", recipientID)
+// 		return
+// 	}
 
-	// Create a WebSocket message
-	wsMessage := models.WebSocketMessage{
-		Type:    "sendmessage",
-		From:    userID,
-		To:      recipientID,
-		Content: message.Content,
-	}
+// 	// Create a WebSocket message
+// 	wsMessage := models.WebSocketMessage{
+// 		Type:    "sendmessage",
+// 		From:    userID,
+// 		To:      recipientID,
+// 		Content: message.Content,
+// 	}
 
-	// Marshal the WebSocket message
-	msgBytes, err := json.Marshal(wsMessage)
-	if err != nil {
-		fmt.Printf("Failed to marshal WebSocket message: %v\n", err)
-		return
-	}
+// 	// Marshal the WebSocket message
+// 	msgBytes, err := json.Marshal(wsMessage)
+// 	if err != nil {
+// 		fmt.Printf("Failed to marshal WebSocket message: %v\n", err)
+// 		return
+// 	}
 
-	// Send the WebSocket message
-	// if err := r.WebSocketService.SendMessage(recipientConn, msgBytes); err != nil {
-		if err := socket.SendMessage(recipientConn, msgBytes); err != nil {
-		// if err := r.socketimpl.SendMessage(recipientConn, msgBytes); err != nil {
-		fmt.Printf("Failed to send WebSocket message to recipient %s: %v\n", recipientID, err)
-	} else {
-		fmt.Printf("Message sent to recipient %s via WebSocket\n", recipientID)
-	}
-}
+// 	// Send the WebSocket message
+// 	// if err := r.WebSocketService.SendMessage(recipientConn, msgBytes); err != nil {
+// 		if err := socket.SendMessage(recipientConn, msgBytes); err != nil {
+// 		// if err := r.socketimpl.SendMessage(recipientConn, msgBytes); err != nil {
+// 		fmt.Printf("Failed to send WebSocket message to recipient %s: %v\n", recipientID, err)
+// 	} else {
+// 		fmt.Printf("Message sent to recipient %s via WebSocket\n", recipientID)
+// 	}
+// }

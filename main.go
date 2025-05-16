@@ -42,18 +42,18 @@ func main() {
 	})
 	userService := userserviceimpl.NewUserService(messagedb)
 	// Create an instance of WebSocketServiceImpl
-	// webSocketImpl := socket.WebSocketServiceImpl{}
-	websocket := socket.NewWebSocketService(messagedb)
+	// webSocketImpl := sock et.WebSocketServiceImpl{}
+	// websocket := websocket_impl.NewWebSocketService(messagedb)
 	// router := routes.NewRouter(authService, userService, websocket, true)
 	// log.Println("Server is running on port 8005")
-	httpRouter := routes.NewRouter(authService, userService, websocket, false)
+	httpRouter := routes.NewRouter(authService, userService, false)
 	go func() {
 		if err := httpRouter.Engine.Run(":8005"); err != nil {
 			log.Fatalf("HTTP server failed to start: %s", err)
 		}
 	}()
 
-	webSocketRouter := routes.NewRouter(authService, userService, websocket, true)
+	webSocketRouter := routes.NewRouter(authService, userService, true)
 	err = webSocketRouter.Engine.Run(":8006")
 	if err != nil {
 		log.Fatalf("Websocket server failed to start: %s", err)
