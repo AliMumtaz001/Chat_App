@@ -12,8 +12,6 @@ type SocketRouter struct {
 	WebSocket      socketinterface.WebSocketService
 	Messageservice userserviceimpl.UserService
 }
-
-// func NewRouter(authService authservice.AuthService, userService userservice.UserService, websocket socketinterface.WebSocketService, onlyWS bool) *Router {
 func NewRouter(userService userserviceimpl.UserService, websocket socketinterface.WebSocketService, onlyWS bool) *SocketRouter {
 	engine := gin.Default()
 	router := &SocketRouter{

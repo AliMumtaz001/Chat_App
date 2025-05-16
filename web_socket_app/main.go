@@ -24,7 +24,7 @@ func main() {
 	messagedb := mongodb.NewStorage(connMongo)
 
 	webSocketImpl := websocket_impl.WebSocketServiceImpl{
-		Clients: make(map[string]*client.Client),
+		Clients: make(map[int]*client.Client),
 		MongoDB: messagedb,
 	}
 
@@ -32,7 +32,7 @@ func main() {
 	messageService := userserviceimpl.NewUserService(messagedb)
 
 	webSocketRouter := routes.NewRouter(messageService, websockets, false)
-	err = webSocketRouter.Engine.Run(":8004")
+	err = webSocketRouter.Engine.Run(":8003")
 	if err != nil {
 		log.Fatalf("Websocket server failed to start: %s", err)
 	}

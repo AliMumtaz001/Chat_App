@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/AliMumtazDev/socket/client"
-	// upgradeconn "github.com/AliMumtazDev/Go_Chat_App/web_socket_app/database"
 )
 
 func (ws *WebSocketServiceImpl) ReceiveMessage(client *client.Client) ([]byte, error) {
