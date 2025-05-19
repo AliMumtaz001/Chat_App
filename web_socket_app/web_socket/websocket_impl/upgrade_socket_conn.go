@@ -1,36 +1,3 @@
-// package connection
-
-// import (
-// 	"log"
-// 	"net/http"
-// 	"sync"
-
-// 	// socket "github.com/AliMumtazDev/socket/models"
-
-// 	socket "github.com/AliMumtazDev/socket/models"
-// )
-
-// func (ws *WebSocketImpl) UpgradeConnection(w http.ResponseWriter, r *http.Request) (*client.Client, error) {
-// 	conn, err := socket.Upgrader.Upgrade(w, r, nil)
-// 	if err != nil {
-// 		log.Printf("Failed to upgrade connection: %v", err)
-// 		return nil, err
-// 	}
-
-// 	userID := r.URL.Query().Get("userID")
-
-// 	client := &client.Client{
-// 		Conn:   conn,
-// 		UserID: userID,
-// 	}
-
-// 	ConnMutex.Lock()
-// 	// socket.Connections[userID] = client
-// 	ConnMutex.Unlock()
-
-// 	return client, nil
-// }
-
 package websocket_impl
 
 import (
@@ -44,11 +11,7 @@ import (
 )
 
 var ConnLock = sync.Mutex{}
-
-// var ConnMutex sync.Mutex
-
 type WebSocketImpl struct{}
-
 func NewWebSocketImpl() *WebSocketImpl {
 	return &WebSocketImpl{}
 }
@@ -85,6 +48,7 @@ func (w *WebSocketServiceImpl) AddConn(userID string, wsConn *client.Client, c *
 		action := incoming.Action
 
 		if action == "send" {
+			log.Println("Sending message to", uid)
 			receiverIDFloat := incoming.DestinationID
 			receiverID := int(receiverIDFloat)
 

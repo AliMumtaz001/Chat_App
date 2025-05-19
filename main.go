@@ -47,13 +47,15 @@ func main() {
 	// websocket := websocket_impl.NewWebSocketService(messagedb)
 	// router := routes.NewRouter(authService, userService, websocket, true)
 	// log.Println("Server is running on port 8005")
-	//16
+	//17
 
-	stoken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIxQGdtYWlsLmNvbSIsImV4cCI6MTc0NzQwOTYzMywidXNlcl9pZCI6MTd9.ldN_Q3PgGatgbfFYxDgE2RoDXwUXbzRBQQhI00Zp2o0"
-	//15
-	rtoken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIyQGdtYWlsLmNvbSIsImV4cCI6MTc0NzQwOTY2NSwidXNlcl9pZCI6MTh9.vwsvDpezybda97yOIrG7ouUyHhu6DbrgxU_ID8ui6Mw"
-	go connection.ConnectToWebSocketServer("ws://localhost:8003/ws", stoken)
-	go connection.ConnectToWebSocketServer("ws://localhost:8003/ws", rtoken)
+	stoken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIxQGdtYWlsLmNvbSIsImV4cCI6MTc0NzY0MTM3MiwidXNlcl9pZCI6MTd9.3semoQBPir4Nw7iit94gIQPQzDNcN-Lj-KX04OmpDQs"
+	//18
+	rtoken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIyQGdtYWlsLmNvbSIsImV4cCI6MTc0NzY0MTQwOSwidXNlcl9pZCI6MTh9.nqTCEI8of7vlRJA9CaFADB0wm4f5BYinljwP1ytwF7I"
+	// ...existing code...
+go connection.ConnectToWebSocketServer("ws://localhost:8004/protected/ws", stoken)
+go connection.ConnectToWebSocketServer("ws://localhost:8004/protected/ws", rtoken)
+// ...existing code...
 	httpRouter := routes.NewRouter(authService, userService, false)
 	if err := httpRouter.Engine.Run(":8005"); err != nil {
 		log.Fatalf("HTTP server failed to start: %s", err)

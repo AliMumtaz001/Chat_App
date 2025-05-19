@@ -1,6 +1,7 @@
-package websocket_impl
+package routes
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/AliMumtazDev/socket/client"
@@ -8,11 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (impl *WebSocketServiceImpl) RegisterWebSocketRoute(c *gin.Context) {
+func (r *SocketRouter) RegisterWebSocketRoute(c *gin.Context) {
+	log.Println("Inside RegisterWebSocketRoute")
 	userID := c.MustGet("userID").(string)
 	conn, err := models.Upgrader.Upgrade(c.Writer, c.Request, nil)
 	client := &client.Client{Conn: conn, UserID: userID}
-	err = impl.AddConn(userID, client, c)
+	err = r.WebSocket.AddConn(userID, client, c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upgrade connection"})
 		return

@@ -1,9 +1,9 @@
-
 package websocket_impl
 
 import (
 	"github.com/AliMumtazDev/Go_Chat_App/database/mongodb"
 	"github.com/AliMumtazDev/socket/client"
+
 	// connection "github.com/AliMumtazDev/socket/connection"
 	socketinterface "github.com/AliMumtazDev/socket/web_socket"
 )
@@ -11,8 +11,8 @@ import (
 type WebSocketServiceImpl struct {
 	Clients map[int]*client.Client
 	MongoDB mongodb.Storage
-	WSImpl *WebSocketImpl
-} 
+	WSImpl  *WebSocketImpl
+}
 
 var _ socketinterface.WebSocketService = &WebSocketServiceImpl{}
 

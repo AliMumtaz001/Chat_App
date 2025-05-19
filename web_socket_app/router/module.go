@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"log"
+
 	userserviceimpl "github.com/AliMumtazDev/Go_Chat_App/api/message_service"
 
 	socketinterface "github.com/AliMumtazDev/socket/web_socket"
@@ -12,13 +14,15 @@ type SocketRouter struct {
 	WebSocket      socketinterface.WebSocketService
 	Messageservice userserviceimpl.UserService
 }
-func NewRouter(userService userserviceimpl.UserService, websocket socketinterface.WebSocketService, onlyWS bool) *SocketRouter {
+func NewRouter(userService userserviceimpl.UserService, websocket socketinterface.WebSocketService) *SocketRouter {
 	engine := gin.Default()
 	router := &SocketRouter{
 		Engine:         engine,
 		WebSocket:      websocket,
 		Messageservice: userService,
 	}
+	log.Println(24, "route")
 	router.SocketRoutes()
+	log.Println(26, "route")
 	return router
 }

@@ -30,6 +30,7 @@ func (s *UserServiceImpl) SendMessageservice(c *gin.Context, senderID, receiverI
 	if err != nil {
 		log.Println("Error writing to WebSocket server:", err)
 	}
+	log.Println("Message sent to WebSocket server:", messageToSend)
 
 	return nil
 }

@@ -31,8 +31,8 @@ func main() {
 	websockets := websocket_impl.NewWebSocketService(webSocketImpl)
 	messageService := userserviceimpl.NewUserService(messagedb)
 
-	webSocketRouter := routes.NewRouter(messageService, websockets, false)
-	err = webSocketRouter.Engine.Run(":8003")
+	webSocketRouter := routes.NewRouter(messageService, websockets)
+	err = webSocketRouter.Engine.Run(":8004")
 	if err != nil {
 		log.Fatalf("Websocket server failed to start: %s", err)
 	}
