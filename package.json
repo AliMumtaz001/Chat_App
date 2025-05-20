@@ -1,20 +1,23 @@
 {
-  "name": "react-tailwind-css-starter-pack",
+  "name": "chat_app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^1.9.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^7.6.0",
     "react-scripts": "5.0.1",
+    "react-toastify": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thepranaygupta/react-tailwind-css-starter-pack.git"
+    "url": "git+https://github.com/thepranaygupta/chat_app.git"
   },
   "author": "Pranay Gupta",
   "bugs": {
-    "url": "https://github.com/thepranaygupta/react-tailwind-css-starter-pack/issues"
+    "url": "https://github.com/thepranaygupta/chat_app/issues"
   },
   "scripts": {
     "start": "react-scripts start",
