@@ -1,0 +1,250 @@
+basePath: /
+definitions:
+  models.Message:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      reciever_id:
+        type: integer
+      sender_id:
+        type: integer
+      timestamp:
+        type: string
+    type: object
+  models.User:
+    properties:
+      email:
+        type: string
+      id:
+        description: gorm.Model
+        type: integer
+      message:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.UserLoginReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8002
+info:
+  contact: {}
+  description: This is a chat application API built with Go and Gin.
+  title: Go Chat App API
+  version: "1.0"
+paths:
+  /delete-message/{_id}:
+    post:
+      description: Delete a message by ID
+      parameters:
+      - description: Message ID
+        in: path
+        name: _id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Delete a message
+      tags:
+      - messages
+  /getmessage:
+    get:
+      description: Retrieve messages between two users
+      parameters:
+      - description: Sender ID
+        in: query
+        name: sender_id
+        required: true
+        type: string
+      - description: Receiver ID
+        in: query
+        name: reciever_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Message'
+            type: array
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Get messages
+      tags:
+      - messages
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserLoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+      summary: Login user
+      tags:
+      - auth
+  /refresh:
+    get:
+      description: Generate a new access token using refresh token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+      summary: Refresh access token
+      tags:
+      - auth
+  /search-user:
+    get:
+      description: Check if a user exists by username
+      parameters:
+      - description: Username to search
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Search for a user
+      tags:
+      - users
+  /sendmessage:
+    post:
+      consumes:
+      - application/json
+      description: Send a message from authenticated user to another user
+      parameters:
+      - description: Message data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/models.Message'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+      security:
+      - BearerAuth: []
+      summary: Send a message
+      tags:
+      - messages
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+      summary: Sign up a new user
+      tags:
+      - auth
+  /update-message/{_id}:
+    put:
+      consumes:
+      - application/json
+      description: Update the content of an existing message
+      parameters:
+      - description: Message ID
+        in: path
+        name: _id
+        required: true
+        type: string
+      - description: Updated message data
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/models.Message'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal Server Error
+      security:
+      - BearerAuth: []
+      summary: Update a message
+      tags:
+      - messages
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
