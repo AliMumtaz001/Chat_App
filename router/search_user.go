@@ -7,32 +7,25 @@ import (
 )
 
 // SearchUserreq godoc
-// @Summary      Search for a user
-// @Description  Check if a user exists by username
+// @Summary      Search for users with partial matching
+// @Description  Returns a list of users whose usernames partially match the query
 // @Tags         users
 // @Produce      json
-// @Param        username  query     string  true  "Username to search"
-// @Success      200
-// @Failure      400
-// @Failure      404
-// @Failure      500
+// @Param        q  query     string  true  "Search query for username (partial match)"
+// @Success      200  {object}  gin.H  "List of matching users"
+// @Failure      400  {object}  gin.H  "Query parameter 'user' is required"
+// @Failure      500  {object}  gin.H  "Failed to search users"
 // @Router       /search-user [get]
 func (r *Router) SearchUserreq(c *gin.Context) {
-	username := c.Query("username")
-	if username == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter 'q' is required"})
+	query := c.Query("user") 
+	if query == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Query parameter 'user' is required"})
 		return
 	}
-
-	exists, err := r.AuthService.SearchUserservice(c, username)
+	users, err := r.AuthService.SearchUserservice(c, query)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search users"})
 		return
 	}
-
-	if exists {
-		c.JSON(http.StatusOK, gin.H{"message": "User exists"})
-	} else {
-		c.JSON(http.StatusNotFound, gin.H{"message": "User not found"})
-	}
+	c.JSON(http.StatusOK, gin.H{"users": users})
 }
