@@ -4,19 +4,17 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/AliMumtazDev/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
 )
 
-func (s *AuthServiceImpl) SearchUserservice(ctx *gin.Context, username string) (bool, error) {
-
+func (s *AuthServiceImpl) SearchUserservice(ctx *gin.Context, username string) ([]models.SearchUser, error) {
 	if username == "" {
-		return false, errors.New("query cannot be empty")
+		return nil, errors.New("username cannot be empty")
 	}
-
-	exists, err := s.userAuth.SearchUserdb(ctx, username)
+	users, err := s.userAuth.SearchUserdb(ctx, username)
 	if err != nil {
-		return false, fmt.Errorf("failed to search user: %w", err)
+		return nil, fmt.Errorf("failed to search user: %w", err)
 	}
-
-	return exists, nil
+	return users, nil
 }

@@ -3,15 +3,25 @@ package postgresdb
 import (
 	"fmt"
 
+	"github.com/AliMumtazDev/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
 )
 
-func (r *StorageImpl) SearchUserdb(c *gin.Context, query string) (bool, error) {
-	var exists bool
-	querySQL := `SELECT EXISTS (SELECT 1 FROM employeedata WHERE username = $1)`
-	err := r.db.QueryRowContext(c, querySQL, query).Scan(&exists)
+func (u *StorageImpl) SearchUserdb(ctx *gin.Context, username string) ([]models.SearchUser, error) {
+	var users []models.SearchUser
+	querySQL := `SELECT username FROM employeedata WHERE username ILIKE $1 LIMIT 10`
+	rows, err := u.db.QueryContext(ctx, querySQL, "%"+username+"%")
 	if err != nil {
-		return false, fmt.Errorf("failed to query user: %w", err)
+		return nil, fmt.Errorf("failed to query users: %w", err)
 	}
-	return exists, nil
+	defer rows.Close()
+	for rows.Next() {
+		var user models.SearchUser
+		err := rows.Scan(&user.Username)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan user: %w", err)
+		}
+		users = append(users, user)
+	}
+	return users, nil
 }

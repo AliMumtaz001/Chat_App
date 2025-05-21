@@ -15,7 +15,14 @@ type Router struct {
 
 func NewRouter(authService authservice.AuthService, userService userservice.UserService, onlyWS bool) *Router {
 	engine := gin.Default()
-	engine.Use(cors.Default()) 
+	    engine.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{"http://localhost:3000"},
+        AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+        AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+        ExposeHeaders:    []string{"Content-Length"},
+        AllowCredentials: true,
+        AllowWebSockets:  true,
+    }))
 	router := &Router{
 		Engine:      engine,
 		AuthService: authService,
