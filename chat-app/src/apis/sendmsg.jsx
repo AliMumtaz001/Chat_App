@@ -16,9 +16,8 @@ export const handleSendMessage = async (receiverId, content, token) => {
   }
 };
 
-// WebSocket connection for real-time messaging
 export const setupWebSocket = (token, onMessageReceived) => {
-  const ws = new WebSocket('ws://localhost:8080/ws'); // Replace with your WebSocket endpoint
+  const ws = new WebSocket('ws://localhost:8004/protected/ws'); 
 
   ws.onopen = () => {
     console.log('WebSocket connected');
