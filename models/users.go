@@ -21,3 +21,7 @@ type UserLoginReq struct {
 	Email    string `json:"email" db:"email"`
 	Password string `json:"password" db:"password"`
 }
+
+type SearchUser struct {
+	Username string `json:"username"`
+}

@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
-	
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func MOngoConn() (*mongo.Client, error) {
-	url := os.Getenv("mongoURL")
+	url := os.Getenv("MONGO_URI")
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(url))
 	if err != nil {
 		log.Panic(err)
@@ -21,5 +21,5 @@ func MOngoConn() (*mongo.Client, error) {
 	}
 	fmt.Println("Connected to MongoDB with database/MongoDB")
 	return client, err
-	
+
 }

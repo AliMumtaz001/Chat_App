@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { signupapi } from '../constants/apiendpoints';
 import { loginapi } from '../constants/apiendpoints';
-export const signup = (username,email, password) => {
+import { sendMessageApi } from '../constants/apiendpoints';
+import { getUsersApi } from '../constants/apiendpoints';
+
+export const signup = (username, email, password) => {
   return axios.post(`${signupapi}`, {
     username,
     email,
@@ -13,5 +16,29 @@ export const login = (email, password) => {
   return axios.post(`${loginapi}`, {
     email,
     password,
+  });
+};
+
+export const sendMessage = (receiverId, content, token) => {
+  return axios.post(
+    `${sendMessageApi}`,
+    {
+      receiver_id: receiverId,
+      content: content,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
+export const getUsers = (searchQuery, token) => {
+  return axios.get(`${getUsersApi}`, {
+    params: { user: searchQuery }, 
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 };

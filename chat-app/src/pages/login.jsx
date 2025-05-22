@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { handleLogin } from '../apis/login';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,17 +26,22 @@ const Login = () => {
         return;
       }
 
+      if (localStorage.getItem('token')) {
+        localStorage.removeItem('token');
+      }
       localStorage.setItem('accessToken', accessToken);
       if (refreshToken) {
         localStorage.setItem('refreshToken', refreshToken);
       } else {
-        console.log('No refresh token received:', result.data);
+        console.log('No refresh token received:');
       }
 
-      toast.success(result.data.message );
-    //   console.log('Login Success - Response:', result.data);
+      toast.success(result.data.message || 'Logged in successfully!');
+      console.log('Login Success - Response:');
+      // console.log(result.data);
       setEmail('');
       setPassword('');
+      navigate('/chat');
     } else {
       const errorMessage = result.error.response?.data?.error || result.error.message || 'Login failed';
       toast.error(errorMessage);
