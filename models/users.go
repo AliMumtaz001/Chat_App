@@ -23,5 +23,6 @@ type UserLoginReq struct {
 }
 
 type SearchUser struct {
+	Id       int    `json:"id"`
 	Username string `json:"username"`
 }
