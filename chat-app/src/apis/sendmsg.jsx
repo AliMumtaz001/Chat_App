@@ -1,5 +1,6 @@
 import { sendMessage } from './apislist/api';
 import { toast } from 'react-toastify';
+import {getsocketApi} from './constants/apiendpoints';
 
 export const handleSendMessage = async (receiverId, content, token) => {
   try {
@@ -16,13 +17,15 @@ export const handleSendMessage = async (receiverId, content, token) => {
   }
 };
 
-export const setupWebSocket = (token, onMessageReceived) => {
-  const ws = new WebSocket('ws://localhost:8004/protected/ws'); 
+const sockettoken = localStorage.getItem('token');
+export const setupWebSocket = (sockettoken, onMessageReceived) => {
+  console.log('WebSocket token:', sockettoken);
+  const ws = new WebSocket(getsocketApi+'protected/ws'); 
 
   ws.onopen = () => {
     console.log('WebSocket connected');
-    // Send authentication token if required by your backend
-    ws.send(JSON.stringify({ token }));
+    ws.current.send(JSON.stringify({action: 'connect', message:"hello"}));
+    ws.send(JSON.stringify({ sockettoken }));
   };
 
   ws.onmessage = (event) => {
@@ -40,55 +43,3 @@ export const setupWebSocket = (token, onMessageReceived) => {
 
   return ws;
 };
-
-// export const setupWebSocket = (token, onMessageReceived) => {
-//   let ws;
-//   let reconnectAttempts = 0;
-//   const maxReconnectAttempts = 5;
-//   const reconnectInterval = 3000; // 3 seconds
-
-//   const connect = () => {
-//     ws = new WebSocket('ws://localhost:8080/ws');
-
-//     ws.onopen = () => {
-//       console.log('WebSocket connected');
-//       reconnectAttempts = 0; // Reset reconnect attempts on successful connection
-//       // Send authentication token
-//       ws.send(JSON.stringify({ token }));
-//     };
-
-//     ws.onmessage = (event) => {
-//       try {
-//         const message = JSON.parse(event.data);
-//         if (message.error) {
-//           toast.error(message.error); // Display errors like "Invalid token"
-//           ws.close();
-//         } else {
-//           onMessageReceived(message);
-//         }
-//       } catch (error) {
-//         console.error('Error parsing WebSocket message:', error);
-//       }
-//     };
-
-//     ws.onclose = () => {
-//       console.log('WebSocket disconnected');
-//       if (reconnectAttempts < maxReconnectAttempts) {
-//         setTimeout(() => {
-//           console.log(`Reconnecting WebSocket (attempt ${reconnectAttempts + 1})...`);
-//           reconnectAttempts++;
-//           connect();
-//         }, reconnectInterval);
-//       } else {
-//         toast.error('Failed to connect to WebSocket after multiple attempts.');
-//       }
-//     };
-
-//     ws.onerror = (error) => {
-//       console.error('WebSocket error:', error);
-//     };
-//   };
-
-//   connect();
-//   return ws;
-// };

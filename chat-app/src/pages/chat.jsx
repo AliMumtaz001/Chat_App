@@ -58,7 +58,7 @@ function Chat() {
       toast.error('Please select a user and enter a message');
       return;
     }
-    const receiverId = selectedUser.id; // This should now work since the backend returns "id"
+    const receiverId = selectedUser.id; 
     if (!receiverId || isNaN(parseInt(receiverId))) {
       toast.error('Invalid receiver ID');
       return;
@@ -96,15 +96,13 @@ function Chat() {
           <div className="flex-1 overflow-y-auto">
             {filteredUsers.map((user) => (
               <div
-                key={user.id} // This should now work
                 onClick={() => {
                   setSelectedUser(user);
                   setMessages([]);
-                  console.log('Selected User:', user); // Log the entire user object
+                  console.log('Selected User:', user); 
                 }}
-                className={`p-4 cursor-pointer hover:bg-gray-100 ${
-                  selectedUser?.id === user.id ? 'bg-blue-100' : ''
-                }`}
+                className={`p-4 cursor-pointer hover:bg-gray-100 ${selectedUser?.id === user.id ? 'bg-blue-100' : ''
+                  }`}
               >
                 {user.username}
               </div>
@@ -121,11 +119,10 @@ function Chat() {
                 {messages.map((msg, index) => (
                   <div
                     key={index}
-                    className={`mb-2 p-2 rounded-lg max-w-md ${
-                      msg.sender_id === selectedUser.id
+                    className={`mb-2 p-2 rounded-lg max-w-md ${parseInt(msg.sender_id) === selectedUser.id
                         ? 'bg-blue-500 text-white ml-auto'
                         : 'bg-gray-200 text-black'
-                    }`}
+                      }`}
                   >
                     {msg.content}
                   </div>
