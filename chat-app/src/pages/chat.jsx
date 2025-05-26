@@ -54,8 +54,17 @@ function Chat() {
   }, [searchQuery, navigate]);
 
   const sendMessage = async () => {
-    if (!selectedUser || !messageInput.trim()) return;
-    const result = await handleSendMessage(selectedUser.id, messageInput, token);
+    if (!selectedUser || !messageInput.trim()) {
+      toast.error('Please select a user and enter a message');
+      return;
+    }
+    const receiverId = selectedUser.id; 
+    if (!receiverId || isNaN(parseInt(receiverId))) {
+      toast.error('Invalid receiver ID');
+      return;
+    }
+    console.log('Sending receiver ID:', receiverId);
+    const result = await handleSendMessage(parseInt(receiverId), messageInput, token);
     if (result.success) {
       setMessageInput('');
     } else {
@@ -87,14 +96,13 @@ function Chat() {
           <div className="flex-1 overflow-y-auto">
             {filteredUsers.map((user) => (
               <div
-                key={user.id}
                 onClick={() => {
                   setSelectedUser(user);
                   setMessages([]);
+                  console.log('Selected User:', user); 
                 }}
-                className={`p-4 cursor-pointer hover:bg-gray-100 ${
-                  selectedUser?.id === user.id ? 'bg-blue-100' : ''
-                }`}
+                className={`p-4 cursor-pointer hover:bg-gray-100 ${selectedUser?.id === user.id ? 'bg-blue-100' : ''
+                  }`}
               >
                 {user.username}
               </div>
@@ -111,11 +119,10 @@ function Chat() {
                 {messages.map((msg, index) => (
                   <div
                     key={index}
-                    className={`mb-2 p-2 rounded-lg max-w-md ${
-                      msg.sender_id === selectedUser.id
+                    className={`mb-2 p-2 rounded-lg max-w-md ${parseInt(msg.sender_id) === selectedUser.id
                         ? 'bg-blue-500 text-white ml-auto'
                         : 'bg-gray-200 text-black'
-                    }`}
+                      }`}
                   >
                     {msg.content}
                   </div>
@@ -128,7 +135,7 @@ function Chat() {
                   onChange={(e) => setMessageInput(e.target.value)}
                   placeholder="Type a message..."
                   className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  onClick={(e) => e.key === 'Enter' && sendMessage()}
+                  onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 />
                 <button
                   onClick={sendMessage}

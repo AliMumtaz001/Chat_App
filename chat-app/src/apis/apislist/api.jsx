@@ -20,12 +20,14 @@ export const login = (email, password) => {
 };
 
 export const sendMessage = (receiverId, content, token) => {
+  const payload = {
+    receiver_id: receiverId,
+    content: content,
+  };
+  console.log('Sending payload to /sendmessage:', payload); // Debug log
   return axios.post(
     `${sendMessageApi}`,
-    {
-      receiver_id: receiverId,
-      content: content,
-    },
+    payload,
     {
       headers: {
         Authorization: `Bearer ${token}`,

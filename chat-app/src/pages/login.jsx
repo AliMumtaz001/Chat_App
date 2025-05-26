@@ -43,8 +43,9 @@ const Login = () => {
       setPassword('');
       navigate('/chat');
     } else {
-      const errorMessage = result.error.response?.data?.error || result.error.message || 'Login failed';
-      toast.error(errorMessage);
+      // const errorMessage = result.error.response?.data?.error || result.error.message ;
+      // toast.error(errorMessage);
+      toast.error(result.error);
       console.error('Login Error:', result.error);
     }
 
