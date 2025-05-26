@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/AliMumtazDev/Go_Chat_App/models"
@@ -30,6 +31,8 @@ func (r *Router) SignUpreq(c *gin.Context) {
 	}
 	response := r.AuthService.SignUpservice(c, &signup)
 	if response == nil {
+
+		log.Println("66", response)
 		return
 	}
 	c.JSON(http.StatusOK, response)

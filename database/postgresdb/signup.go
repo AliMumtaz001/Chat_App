@@ -3,7 +3,6 @@ package postgresdb
 import (
 	"database/sql"
 	"net/http"
-	"regexp"
 
 	"github.com/AliMumtazDev/Go_Chat_App/models"
 	"github.com/gin-gonic/gin"
@@ -11,15 +10,8 @@ import (
 
 func (u *StorageImpl) SignUpdb(c *gin.Context, req *models.User) *models.User {
 
-	emailRegex := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
-	matched, err := regexp.MatchString(emailRegex, req.Email)
-	if err != nil || !matched {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email format"})
-		return nil
-	}
-
 	var existingEmail string
-	err = u.db.QueryRow("SELECT email FROM employeedata WHERE email = $1", req.Email).Scan(&existingEmail)
+	err := u.db.QueryRow("SELECT email FROM employeedata WHERE email = $1", req.Email).Scan(&existingEmail)
 	if err == nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "User already exists with this email"})
 		return nil
