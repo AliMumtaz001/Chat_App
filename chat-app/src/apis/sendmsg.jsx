@@ -1,6 +1,6 @@
 import { sendMessage } from './apislist/api';
-import { toast } from 'react-toastify';
 import {getsocketApi} from './constants/apiendpoints';
+
 
 export const handleSendMessage = async (receiverId, content, token) => {
   try {
@@ -17,15 +17,21 @@ export const handleSendMessage = async (receiverId, content, token) => {
   }
 };
 
-const sockettoken = localStorage.getItem('token');
-export const setupWebSocket = (sockettoken, onMessageReceived) => {
+let ws;
+
+export const setupWebSocket = (onMessageReceived) => {
+  if (ws && ws.readyState !== WebSocket.CLOSED) {
+    console.log('WebSocket already connected');
+    return ws;
+  }
+
+  const sockettoken = localStorage.getItem('accessToken');
   console.log('WebSocket token:', sockettoken);
-  const ws = new WebSocket(getsocketApi+'protected/ws'); 
+  ws = new WebSocket(getsocketApi + 'protected/ws');
 
   ws.onopen = () => {
     console.log('WebSocket connected');
-    ws.current.send(JSON.stringify({action: 'connect', message:"hello"}));
-    ws.send(JSON.stringify({ sockettoken }));
+    ws.send(JSON.stringify({ action: 'connect', message: "hello", token: sockettoken }));
   };
 
   ws.onmessage = (event) => {
@@ -35,11 +41,15 @@ export const setupWebSocket = (sockettoken, onMessageReceived) => {
 
   ws.onclose = () => {
     console.log('WebSocket disconnected');
+    setTimeout(() => {
+      console.log('Attempting to reconnect...');
+      setupWebSocket(onMessageReceived);
+    }, 3000); 
   };
 
   ws.onerror = (error) => {
     console.error('WebSocket error:', error);
   };
 
-  return ws;
+  return ;
 };
