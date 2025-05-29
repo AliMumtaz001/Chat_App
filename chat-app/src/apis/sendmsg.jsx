@@ -1,6 +1,5 @@
 import { sendMessage } from './apislist/api';
-import {getsocketApi} from './constants/apiendpoints';
-
+// import { getsocketApi } from './constants/apiendpoints';
 
 export const handleSendMessage = async (receiverId, content, token) => {
   try {
@@ -17,39 +16,45 @@ export const handleSendMessage = async (receiverId, content, token) => {
   }
 };
 
-let ws;
 
-export const setupWebSocket = (onMessageReceived) => {
-  if (ws && ws.readyState !== WebSocket.CLOSED) {
+let ws
+export const setupWebSocket = (token, onMessageReceived) => {
+  if (ws && ws.readyState === WebSocket.OPEN) {
     console.log('WebSocket already connected');
     return ws;
   }
 
-  const sockettoken = localStorage.getItem('accessToken');
-  console.log('WebSocket token:', sockettoken);
-  ws = new WebSocket(getsocketApi + 'protected/ws');
+  const wsUrl = `ws://localhost:8004/protected/ws?token=${token}`;
+  console.log('Connecting to WebSocket URL:', wsUrl);
+  ws = new WebSocket(wsUrl); 
 
   ws.onopen = () => {
     console.log('WebSocket connected');
-    ws.send(JSON.stringify({ action: 'connect', message: "hello", token: sockettoken }));
   };
 
   ws.onmessage = (event) => {
-    const message = JSON.parse(event.data);
-    onMessageReceived(message);
+    try {
+      const message = JSON.parse(event.data);
+      console.log('Received WebSocket message:', message);
+      onMessageReceived(message);
+    } catch (error) {
+      console.error('Error parsing WebSocket message:', error);
+    }
   };
 
   ws.onclose = () => {
     console.log('WebSocket disconnected');
-    setTimeout(() => {
-      console.log('Attempting to reconnect...');
-      setupWebSocket(onMessageReceived);
-    }, 3000); 
+    if (ws.readyState !== WebSocket.OPEN) {
+      setTimeout(() => {
+        console.log('Attempting to reconnect...');
+        setupWebSocket(token, onMessageReceived);
+      }, 3000);
+    }
   };
 
   ws.onerror = (error) => {
     console.error('WebSocket error:', error);
   };
 
-  return ;
+  return ws;
 };

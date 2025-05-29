@@ -35,7 +35,7 @@ func (r *Router) GetMessagereq(c *gin.Context) {
 
 	fmt.Printf("Sender ID: %s, Receiver ID: %s\n", senderID, receiverID)
 
-	messages, err := r.UserService.GetMessageservice(c, senderID, receiverID)
+	messages, err := r.UserService.GetMessageService(c, senderID, receiverID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

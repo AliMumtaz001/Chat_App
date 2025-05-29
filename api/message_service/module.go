@@ -6,8 +6,8 @@ import (
 )
 
 type UserService interface {
-	SendMessageservice(c *gin.Context, message *models.Message) error
-	GetMessageservice(c *gin.Context, senderID string, receiverID string) ([]models.Message, error)
-	UpdateMessageservice(c *gin.Context, messageID string, message models.Message) error
-	DeleteMessageservice(c *gin.Context, messageID string) error
+	SendMessageService(c *gin.Context, message *models.Message) error
+	GetMessageService(c *gin.Context, senderID string, receiverID string) ([]models.Message, error)
+	UpdateMessageService(c *gin.Context, messageID string, message models.Message) error
+	DeleteMessageService(c *gin.Context, messageID string) error
 }

@@ -20,3 +20,9 @@ type WebSocketMessage struct {
 	To      string `json:"to"`      // Recipient ID
 	From    string `json:"from"`    // Sender ID
 }
+
+type ServerMesageToSocket struct {
+	Action        string
+	DestinationID int
+	Content       string
+}
