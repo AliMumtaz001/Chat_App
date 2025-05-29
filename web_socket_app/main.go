@@ -5,10 +5,9 @@ import (
 
 	userserviceimpl "github.com/AliMumtazDev/Go_Chat_App/api/message_service"
 	"github.com/AliMumtazDev/Go_Chat_App/database/mongodb"
-	"github.com/AliMumtazDev/socket/client"
 	routes "github.com/AliMumtazDev/socket/router"
 	"github.com/AliMumtazDev/socket/web_socket/websocket_impl"
-
+	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 )
 
@@ -22,19 +21,15 @@ func main() {
 		log.Fatalf("MongoDB connection error: %s", err)
 	}
 	messagedb := mongodb.NewStorage(connMongo)
-
-	webSocketImpl := websocket_impl.WebSocketServiceImpl{
-		Clients: make(map[int]*client.Client),
+	websocketserv := websocket_impl.NewWebSocketServiceImpl{
+		Clients: make(map[int]*websocket.Conn),
 		MongoDB: messagedb,
 	}
-
-	websockets := websocket_impl.NewWebSocketService(webSocketImpl)
-	messageService := userserviceimpl.NewUserService(messagedb)
-
+	websockets := websocket_impl.NewWebSocketService(websocketserv)
+	messageService := userserviceimpl.NewUserService(messagedb, websockets)
 	webSocketRouter := routes.NewRouter(messageService, websockets)
 	err = webSocketRouter.Engine.Run(":8004")
 	if err != nil {
 		log.Fatalf("Websocket server failed to start: %s", err)
 	}
-
 }
