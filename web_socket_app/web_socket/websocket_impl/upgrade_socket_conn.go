@@ -21,54 +21,57 @@ func (w *WebSocketServiceImpl) AddConn(userID string, wsConn *websocket.Conn, c 
 	}
 	log.Println("User ID:", uid)
 	ConnLock.Lock()
+	if existingclient, ok := w.Clients[uid]; ok {
+		existingclient.Close()
+	}
 	w.Clients[uid] = wsConn
 	ConnLock.Unlock()
 	fmt.Println("connected clients:", w.Clients)
 	fmt.Println("connected clientshghg:", wsConn)
 	log.Println("User connected:", uid)
-	go func() {
-		defer func() {
-			ConnLock.Lock()
-			delete(w.Clients, uid)
-			ConnLock.Unlock()
-			wsConn.Close()
-			log.Println("User disconnected:", uid)
-		}()
-		for {
-			// var incoming userserviceimpl.models.ServerMesageToSocket
-			var incoming models.ServerMesageToSocket
-			err := wsConn.ReadJSON(&incoming)
-			if err != nil {
-				log.Println("Error reading JSON:", err)
-				break
+	defer func() {
+		ConnLock.Lock()
+		delete(w.Clients, uid)
+		ConnLock.Unlock()
+		wsConn.Close()
+		log.Println("User disconnected:", uid)
+	}()
+	// go func() {
+	for {
+		// var incoming userserviceimpl.models.ServerMesageToSocket
+		var incoming models.ServerMesageToSocket
+		err := wsConn.ReadJSON(&incoming)
+		if err != nil {
+			log.Println("Error reading JSON:", err)
+			break
+		}
+		log.Println("Received JSON from", uid, ":", incoming)
+		if incoming.Action == "send" {
+			receiverID := int(incoming.DestinationID)
+			log.Printf("Received message for reciever_id: %d", receiverID)
+			if receiverID == uid {
+				log.Println("Cannot send message to self")
+				continue
 			}
-			log.Println("Received JSON from", uid, ":", incoming)
-			if incoming.Action == "send" {
-				receiverID := int(incoming.DestinationID)
-				log.Printf("Received message for receiver_id: %d", incoming.DestinationID)
-				if receiverID == uid {
-					log.Println("Cannot send message to self")
-					continue
+			// ConnLock.Lock()
+			// conn, ok := w.Clients[receiverID]
+			// ConnLock.Unlock()
+			if conn, ok := w.Clients[receiverID]; ok {
+				message := map[string]any{
+					"reciever_id": receiverID,
+					"content":     incoming.Content,
 				}
-				ConnLock.Lock()
-				conn, ok := w.Clients[receiverID]
-				ConnLock.Unlock()
-				if ok {
-					message := map[string]interface{}{
-						"sender_id": uid,
-						"content":   incoming.Content,
-					}
-					err := conn.WriteJSON(message)
-					if err != nil {
-						log.Println("Error writing JSON to receiver:", err)
-					} else {
-						log.Println("Message sent to receiver:", receiverID)
-					}
+				err := conn.WriteJSON(message)
+				if err != nil {
+					log.Println("Error writing JSON to reciever_id:", err)
 				} else {
-					log.Println("Receiver not connected:", receiverID)
+					log.Println("Message sent to reciever_id:", receiverID)
 				}
+			} else {
+				log.Println("Receiver not connected:", receiverID)
 			}
 		}
-	}()
+	}
+	// }()
 	return nil
 }

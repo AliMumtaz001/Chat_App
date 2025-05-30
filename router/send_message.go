@@ -54,7 +54,7 @@ func (r *Router) SendMessagereq(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message":     "Message sent successfully",
 		"sender_id":   senderID,
-		"receiver_id": receiverID,
+		"reciever_id": receiverID,
 		"timestamp":   message.Timestamp,
 	})
 }

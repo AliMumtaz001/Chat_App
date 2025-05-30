@@ -12,14 +12,15 @@ type WebSocketServiceImpl struct {
 	MongoDB mongodb.Storage
 }
 
-func NewWebSocketService(ip NewWebSocketServiceImpl) web_socket.WebSocketService {
+func NewWebSocketService(input mongodb.Storage) web_socket.WebSocketService {
 	return &WebSocketServiceImpl{
+		MongoDB: input,
 		Clients: make(map[int]*websocket.Conn),
-		MongoDB: ip.MongoDB,
+		// MongoDB: ip.Mongo,
 	}
 }
+
 type NewWebSocketServiceImpl struct {
-	Clients map[int]*websocket.Conn
 	MongoDB mongodb.Storage
 }
 

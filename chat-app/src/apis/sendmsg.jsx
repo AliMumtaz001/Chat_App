@@ -1,5 +1,4 @@
 import { sendMessage } from './apislist/api';
-// import { getsocketApi } from './constants/apiendpoints';
 
 export const handleSendMessage = async (receiverId, content, token) => {
   try {
@@ -16,8 +15,7 @@ export const handleSendMessage = async (receiverId, content, token) => {
   }
 };
 
-
-let ws
+let ws;
 export const setupWebSocket = (token, onMessageReceived) => {
   if (ws && ws.readyState === WebSocket.OPEN) {
     console.log('WebSocket already connected');
@@ -26,17 +24,18 @@ export const setupWebSocket = (token, onMessageReceived) => {
 
   const wsUrl = `ws://localhost:8004/protected/ws?token=${token}`;
   console.log('Connecting to WebSocket URL:', wsUrl);
-  ws = new WebSocket(wsUrl); 
+  ws = new WebSocket(wsUrl);
 
   ws.onopen = () => {
     console.log('WebSocket connected');
+    ws.send(JSON.stringify({ action: 'ping', message: 'hello from client' }));
   };
 
   ws.onmessage = (event) => {
     try {
       const message = JSON.parse(event.data);
       console.log('Received WebSocket message:', message);
-      onMessageReceived(message);
+      onMessageReceived({ ...message, timestamp: new Date().toLocaleTimeString() });
     } catch (error) {
       console.error('Error parsing WebSocket message:', error);
     }
