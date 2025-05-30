@@ -35,7 +35,7 @@ func (r *Router) UpdateMessagereq(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "Missing new message"})
 		return
 	}
-	err := r.UserService.UpdateMessageservice(c, messageID, message)
+	err := r.UserService.UpdateMessageService(c, messageID, message)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Internal server error: " + err.Error()})
 		return

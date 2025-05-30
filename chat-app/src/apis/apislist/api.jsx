@@ -19,12 +19,12 @@ export const login = (email, password) => {
   });
 };
 
-export const sendMessage = (receiverId, content, token) => {
+export const sendMessage = (reciever_id, content, token) => {
   const payload = {
-    receiver_id: receiverId,
+    reciever_id: reciever_id,
     content: content,
   };
-  console.log('Sending payload to /sendmessage:', payload); // Debug log
+  console.log('Sending payload to /sendmessage:', payload);
   return axios.post(
     `${sendMessageApi}`,
     payload,
@@ -38,7 +38,17 @@ export const sendMessage = (receiverId, content, token) => {
 
 export const getUsers = (searchQuery, token) => {
   return axios.get(`${getUsersApi}`, {
-    params: { user: searchQuery }, 
+    params: { user: searchQuery },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+// New function to fetch message history
+export const getMessageHistory = (receiver_id, token) => {
+  return axios.get(`${sendMessageApi}/history`, {
+    params: { receiver_id },
     headers: {
       Authorization: `Bearer ${token}`,
     },

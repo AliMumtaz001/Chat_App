@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (s *UserServiceImpl) GetMessageservice(c *gin.Context, senderID, receiverID string) ([]models.Message, error) {
+func (s *UserServiceImpl) GetMessageService(c *gin.Context, senderID, receiverID string) ([]models.Message, error) {
 	messages, err := s.messageAuth.GetMessagedb(c, senderID, receiverID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get messages: %w", err)

@@ -3,7 +3,6 @@ package routes
 import (
 	userserviceimpl "github.com/AliMumtazDev/Go_Chat_App/api/message_service"
 	"github.com/gin-contrib/cors"
-
 	socketinterface "github.com/AliMumtazDev/socket/web_socket"
 	"github.com/gin-gonic/gin"
 )

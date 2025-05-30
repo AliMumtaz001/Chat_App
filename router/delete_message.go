@@ -17,7 +17,7 @@ import (
 // @Router       /delete-message/{_id} [post]
 func (r *Router) DeleteMessagereq(c *gin.Context) {
 	messageID := c.Param("_id")
-	err := r.UserService.DeleteMessageservice(c, messageID)
+	err := r.UserService.DeleteMessageService(c, messageID)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return

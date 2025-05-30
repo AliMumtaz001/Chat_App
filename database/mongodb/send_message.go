@@ -8,11 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (r *StorageMongoImpl) SendMessagedb(c *gin.Context, senderID, receiverID int64, msg models.Message) error {
+func (r *StorageMongoImpl) SaveMessage(c *gin.Context, msg *models.Message) error {
 
 	message := models.Message{
-		SenderID:   senderID,
-		ReceiverID: receiverID,
+		SenderID:   msg.SenderID,
+		ReceiverID: msg.ReceiverID,
 		Content:    msg.Content,
 		Timestamp:  time.Now(),
 	}

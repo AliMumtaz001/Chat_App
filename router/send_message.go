@@ -2,6 +2,7 @@ package routes
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -24,6 +25,7 @@ import (
 func (r *Router) SendMessagereq(c *gin.Context) {
 	var message models.Message
 	userID := c.MustGet("userID").(string)
+	log.Print("sender userid iss:",userID)
 
 	// Bind JSON request to the message model
 	if err := c.ShouldBindJSON(&message); err != nil {
@@ -31,78 +33,28 @@ func (r *Router) SendMessagereq(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
+	fmt.Printf("Received message: %+v\n", message)
 
-	// Validate receiver ID
-	if message.ReceiverID == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid receiver ID"})
-		return
-	}
-
-	// Parse sender ID
 	senderID, err := strconv.ParseInt(userID, 10, 64)
+	message.SenderID = senderID
+
 	if err != nil {
 		fmt.Println("Error parsing sender ID:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid sender ID"})
 		return
 	}
 
-	// Create a database message object
-	dbMessage := models.Message{
-		SenderID:   senderID,
-		ReceiverID: message.ReceiverID,
-		Content:    message.Content,
-	}
-
-	// Save the message to the database
-	if err := r.UserService.SendMessageservice(c, senderID, message.ReceiverID, dbMessage); err != nil {
+	if err := r.UserService.SendMessageService(c, &message); err != nil {
 		fmt.Println("Error saving message:", err)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
+	receiverID := message.ReceiverID
 
-	// Notify the recipient via WebSocket
-	// r.NotifyRecipient(userID, message)
-
-	// Respond with success
-	c.JSON(http.StatusOK, gin.H{"message": "Message sent successfully", "id": userID})
+	c.JSON(http.StatusOK, gin.H{
+		"message":     "Message sent successfully",
+		"sender_id":   senderID,
+		"reciever_id": receiverID,
+		"timestamp":   message.Timestamp,
+	})
 }
-
-// notifyRecipient handles notifying the recipient via WebSocket
-// func (r *Router) NotifyRecipient(userID string, message models.Message) {
-// 	// socket.ConnMutex.Lock()
-// 	socket.ConnMutex.Lock()
-// 	defer socket.ConnMutex.Unlock()
-
-// 	recipientID := strconv.FormatInt(message.ReceiverID, 10)
-// 	fmt.Printf("Attempting to notify recipient: %s\n", recipientID)
-
-// 	recipientConn, exists := socket.Connections[recipientID]
-// 	if !exists {
-// 		fmt.Printf("Recipient %s is not connected via WebSocket\n", recipientID)
-// 		return
-// 	}
-
-// 	// Create a WebSocket message
-// 	wsMessage := models.WebSocketMessage{
-// 		Type:    "sendmessage",
-// 		From:    userID,
-// 		To:      recipientID,
-// 		Content: message.Content,
-// 	}
-
-// 	// Marshal the WebSocket message
-// 	msgBytes, err := json.Marshal(wsMessage)
-// 	if err != nil {
-// 		fmt.Printf("Failed to marshal WebSocket message: %v\n", err)
-// 		return
-// 	}
-
-// 	// Send the WebSocket message
-// 	// if err := r.WebSocketService.SendMessage(recipientConn, msgBytes); err != nil {
-// 		if err := socket.SendMessage(recipientConn, msgBytes); err != nil {
-// 		// if err := r.socketimpl.SendMessage(recipientConn, msgBytes); err != nil {
-// 		fmt.Printf("Failed to send WebSocket message to recipient %s: %v\n", recipientID, err)
-// 	} else {
-// 		fmt.Printf("Message sent to recipient %s via WebSocket\n", recipientID)
-// 	}
-// }

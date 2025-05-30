@@ -18,7 +18,6 @@ function Chat() {
 
   useEffect(() => {
     const storedToken = localStorage.getItem('accessToken');
-    console.log('Stored Access Token:', storedToken);
     if (!storedToken || storedToken === 'undefined') {
       toast.error('Access token not found or invalid. Please log in.');
       navigate('/login');
@@ -29,13 +28,10 @@ function Chat() {
     const fetchUsers = async () => {
       const result = await handleGetUsers(searchQuery, storedToken);
       if (result.success) {
-        console.log('Fetched Users:', result.data.users);
         setUsers(result.data.users || []);
       } else {
-        console.error('Fetch Users Error:', result.error);
         toast.error(result.error);
         if (result.error.toLowerCase().includes('token')) {
-          toast.error('Session expired. Please log in again.');
           localStorage.removeItem('accessToken');
           navigate('/login');
         }
@@ -58,13 +54,12 @@ function Chat() {
       toast.error('Please select a user and enter a message');
       return;
     }
-    const receiverId = selectedUser.id; 
-    if (!receiverId || isNaN(parseInt(receiverId))) {
+    const receiverId = parseInt(selectedUser.id);
+    if (isNaN(receiverId)) {
       toast.error('Invalid receiver ID');
       return;
     }
-    console.log('Sending receiver ID:', receiverId);
-    const result = await handleSendMessage(parseInt(receiverId), messageInput, token);
+    const result = await handleSendMessage(receiverId, messageInput, token);
     if (result.success) {
       setMessageInput('');
     } else {
@@ -96,13 +91,12 @@ function Chat() {
           <div className="flex-1 overflow-y-auto">
             {filteredUsers.map((user) => (
               <div
+                key={user.id}
                 onClick={() => {
                   setSelectedUser(user);
                   setMessages([]);
-                  console.log('Selected User:', user); 
                 }}
-                className={`p-4 cursor-pointer hover:bg-gray-100 ${selectedUser?.id === user.id ? 'bg-blue-100' : ''
-                  }`}
+                className={`p-4 cursor-pointer hover:bg-gray-100 ${selectedUser?.id === user.id ? 'bg-blue-100' : ''}`}
               >
                 {user.username}
               </div>
@@ -119,7 +113,7 @@ function Chat() {
                 {messages.map((msg, index) => (
                   <div
                     key={index}
-                    className={`mb-2 p-2 rounded-lg max-w-md ${parseInt(msg.sender_id) === selectedUser.id
+                    className={`mb-2 p-2 rounded-lg max-w-md ${parseInt(msg.sender_id) === parseInt(selectedUser.id)
                         ? 'bg-blue-500 text-white ml-auto'
                         : 'bg-gray-200 text-black'
                       }`}
