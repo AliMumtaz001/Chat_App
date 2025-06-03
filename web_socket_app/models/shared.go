@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/AliMumtazDev/socket/client"
 	"github.com/gorilla/websocket"
 )
 
@@ -17,6 +16,11 @@ var Upgrader = websocket.Upgrader{
 }
 
 var (
-	Connections = make(map[string]*client.Client)
+	Connections = make(map[string]*Client)
 	ConnMutex   = &sync.Mutex{}
 )
+
+type Client struct {
+	Conn   *websocket.Conn
+	UserID string
+}

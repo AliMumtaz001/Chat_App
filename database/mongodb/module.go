@@ -7,7 +7,7 @@ import (
 )
 
 type Storage interface {
-	SendMessagedb(c *gin.Context, senderID, receiverID int64, msg models.Message) error
+	SaveMessage(c *gin.Context, msg *models.Message) error
 	GetMessagedb(c *gin.Context, senderID string, receiverID string) ([]models.Message, error)
 	UpdateMessagedb(c *gin.Context, messageID primitive.ObjectID, message models.Message) error
 	DeleteMessagedb(c *gin.Context, messageID primitive.ObjectID) error

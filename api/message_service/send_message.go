@@ -9,26 +9,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ServerMesageToSocket struct {
-	Action        string
-	DestinationID int
-	Content       string
-}
 
-func (s *UserServiceImpl) SendMessageservice(c *gin.Context, senderID, receiverID int64, message models.Message) error {
-	err := s.messageAuth.SendMessagedb(c, senderID, receiverID, message)
+
+func (s *UserServiceImpl) SendMessageService(c *gin.Context, message *models.Message) error {
+	err := s.messageAuth.SaveMessage(c, message)
 	if err != nil {
 		return fmt.Errorf("failed to send message: %w", err)
 	}
-	messageToSend := ServerMesageToSocket{
+	if connection.Conn == nil {
+		return fmt.Errorf("WebSocket connection not established")
+	}
+	log.Print("recieving and sending ids are: ", message.ReceiverID, message.SenderID)
+	messageToSend := models.ServerMesageToSocket{
 		Action:        "send",
 		DestinationID: int(message.ReceiverID),
 		Content:       message.Content,
 	}
-
 	err = connection.Conn.WriteJSON(messageToSend)
 	if err != nil {
 		log.Println("Error writing to WebSocket server:", err)
+		return err
 	}
 	log.Println("Message sent to WebSocket server:", messageToSend)
 

@@ -6,7 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (s *UserServiceImpl) UpdateMessageservice(c *gin.Context, messageID string, message models.Message) error {
+func (s *UserServiceImpl) UpdateMessageService(c *gin.Context, messageID string, message models.Message) error {
 	objId, err := primitive.ObjectIDFromHex(messageID)
 	if err != nil {
 		return err
