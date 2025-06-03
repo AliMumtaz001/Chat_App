@@ -18,7 +18,6 @@ import (
 	"github.com/AliMumtazDev/Go_Chat_App/database/postgresdb"
 	routes "github.com/AliMumtazDev/Go_Chat_App/router"
 	connection "github.com/AliMumtazDev/Go_Chat_App/socket_clint"
-	"github.com/AliMumtazDev/socket/web_socket/websocket_impl"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -43,8 +42,8 @@ func main() {
 	authService := authserviceimpl.NewAuthService(authserviceimpl.NewAuthServiceImpl{
 		UserAuth: userdb,
 	})
-	websockets := websocket_impl.NewWebSocketService(messagedb)
-	userService := userserviceimpl.NewUserService(messagedb, websockets)
+
+	userService := userserviceimpl.NewUserService(messagedb)
 	go func() {
 		connection.ConnectToWebSocketServer("ws://localhost:8004/backend/ws", key)
 		log.Println("Connected to WebSocket server")

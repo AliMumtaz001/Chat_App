@@ -16,6 +16,7 @@ export const handleSendMessage = async (receiverId, content, token) => {
 };
 
 let ws;
+
 export const setupWebSocket = (token, onMessageReceived) => {
   if (ws && ws.readyState === WebSocket.OPEN) {
     console.log('WebSocket already connected');
