@@ -1,44 +1,3 @@
-# version: "3.8"
-# services:
-#   app:
-#     build: .
-#     container_name: chat_app
-#     ports:
-#       - "8002:8002"  # Change if your app uses another port
-#     depends_on:
-#       - mongo
-#       - postgres
-#     environment:
-#       - MONGO_URI=mongodb://mongo:27017
-#       - POSTGRES_URI=postgres://postgres:postgres@postgres:5432/chatdb?sslmode=disable
-#     volumes:
-#       - .:/app
-#     restart: always
-#   mongo:
-#     image: mongo:latest
-#     container_name: chat_mongo
-#     ports:
-#       - "27017:27017"
-#     volumes:
-#       - mongo_data:/data/db
-#     restart: always
-#   postgres:
-#     image: postgres:15
-#     container_name: chat_postgres
-#     environment:
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: 123456
-#       POSTGRES_DB: gotest
-#     ports:
-#       - "5432:5432"
-#     volumes:
-#       - pgdata:/var/lib/postgresql/data
-#     restart: always
-# volumes:
-#   mongo_data:
-#   pgdata:
-
-
 version: "3.8"
 services:
   app:
@@ -73,6 +32,24 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
+  websocket:
+    build: ./web_socket_app
+    container_name: chat_websocket
+    ports:
+      - "8004:8004"
+    depends_on:
+      - app
+    restart: always
+
+  frontend:
+    build: ./chat-app
+    container_name: chat_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - websocket
+    restart: always
+
 volumes:
   mongo_data:
   pgdata:

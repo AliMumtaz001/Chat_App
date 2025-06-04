@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// import { getUsers } from '../apis/apislist/api';
 import { getUsers } from '../apis/apislist/api';
 
 const SearchUser = ({ onUserSelect }) => {
@@ -45,15 +44,15 @@ const SearchUser = ({ onUserSelect }) => {
         value={searchQuery}
         onChange={handleSearch}
         placeholder="Search users..."
-        className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 text-gray-700 placeholder-gray-400"
       />
-      {loading && <p className="text-gray-600">Loading...</p>}
-      <ul className="mt-2">
+      {loading && <p className="text-gray-500 text-sm mt-2">Loading...</p>}
+      <ul className="mt-3 max-h-64 overflow-y-auto">
         {users.map((user) => (
           <li
             key={user.id}
             onClick={() => handleSelect(user)}
-            className="p-2 hover:bg-gray-200 cursor-pointer"
+            className="p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-200 transition-colors duration-150 text-gray-800"
           >
             {user.username}
           </li>
